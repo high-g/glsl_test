@@ -84,7 +84,7 @@ var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 // uniformLocationへ座標変換行列を登録
 gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 
-// モデル病が
+// モデル描画
 gl.drawArrays(gl.TRIANGLES, 0, 3);
 
 // コンテキスト再描画
