@@ -40,8 +40,8 @@ var c = document.getElementById('canvas'),
     gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 
 // canvas縦横設定
-c.width = 300;
-c.height = 200;
+c.width = 600;
+c.height = 500;
 
 // webgl初期化
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -90,25 +90,33 @@ var m = new matIV();
 var mMatrix = m.identity(m.create());
 var vMatrix = m.identity(m.create());
 var pMatrix = m.identity(m.create());
+var tmpMatrix = m.identity(m.create());
 var mvpMatrix = m.identity(m.create());
-
-// ビュー座標変換行列
-m.lookAt([0, 0, 2.0], [0, 0, 0], [0, 1, 0], vMatrix);
-
-// プロジェクション座標変換行列
-m.perspective(60, c.width / c.height, 0.1, 100, pMatrix);
-
-// 各行列をかけ合わせ座標変換行列を完成させる
-m.multiply(pMatrix, vMatrix, mvpMatrix);
-m.multiply(mvpMatrix, mMatrix, mvpMatrix);
 
 // uniformLocation取得
 var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 
-// uniformLocationへ座標変換行列を登録
-gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+// ビュー座標変換行列, プロジェクション座標変換行列
+m.lookAt([0, 0, 3.0], [0, 0, 0], [0, 1, 0], vMatrix);
+m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
+m.multiply(pMatrix, vMatrix, tmpMatrix);
 
-// モデル描画
+// 一つ目のモデル 移動するためのモデル座標変換行列
+m.translate(mMatrix, [1.5, 0.0, 0.0], mMatrix);
+
+// モデル、ビュー、プロジェクション
+m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+
+// uniformLocationへ座標変換行列を登録し描画(一つ目)
+gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+m.identity(mMatrix);
+m.translate(mMatrix, [-1.5, 0.0, 0.0], mMatrix);
+
+m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+
+gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
 gl.drawArrays(gl.TRIANGLES, 0, 3);
 
 // コンテキスト再描画
