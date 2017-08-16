@@ -80,7 +80,7 @@ function create_shader(id) {
     default :
       return;
   }
-console.log(id, shader_language);
+
   // ソース割当（登録）
   gl.shaderSource(shader, shader_language);
   

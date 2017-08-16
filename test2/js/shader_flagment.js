@@ -1,4 +1,6 @@
 var Shader = Shader || {};
-Shader.flagment = `void main(void){
+Shader.flagment = `
+void main(void){
   gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-}`;
+}
+`;
