@@ -56,14 +56,13 @@ var f_shader = create_shader('fs');
 var prg = create_program(v_shader, f_shader);
 
 // attrubuteLocationを配列に取得
-var attLocation = [];
-attLocation[0] = gl.getAttribLocation(prg, 'position');
-attLocation[1] = gl.getAttribLocation(prg, 'color');
+var attLocation = [
+  gl.getAttribLocation(prg, 'position'),
+  gl.getAttribLocation(prg, 'color')
+];
 
 // attributeの要素数を配列に格納
-var attStride = [];
-attStride[0] = 3;
-attStride[1] = 4;
+var attStride = [3, 4];
 
 var vertex_position = [
    0.0, 1.0, 0.0,
@@ -104,7 +103,7 @@ m.multiply(pMatrix, vMatrix, tmpMatrix);
 // 一つ目のモデル 移動するためのモデル座標変換行列
 m.translate(mMatrix, [1.5, 0.0, 0.0], mMatrix);
 
-// モデル、ビュー、プロジェクション
+// モデル x ビュー x プロジェクション
 m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 
 // uniformLocationへ座標変換行列を登録し描画(一つ目)
