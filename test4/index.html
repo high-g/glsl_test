@@ -87,9 +87,7 @@ var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 // ループカウント
 var count = 0;
 
-
 init();
-
 
 /**
  * 初期動作
@@ -147,10 +145,21 @@ function loop() {
   gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   
+  // モデル3 拡大縮小
+  var s = Math.sin(rad) + 1.0;
+  m.identity(mMatrix);
+  m.translate(mMatrix, [-1.0, -1.0, 0.0], mMatrix);
+  m.scale(mMatrix, [s, s, 0.0], mMatrix);
+  
+  // モデル3 座標変換、レンダリング
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  
   // コンテキスト再描画
   gl.flush();
   
-  setTimeout(loop, 10);
+  window.requestAnimationFrame(loop);
 }
 
 
