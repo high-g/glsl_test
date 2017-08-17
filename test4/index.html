@@ -29,7 +29,7 @@ precision mediump float;
 varying vec4 vColor;
 
 void main(void){
-  gl_FragColor =  vColor; //vec4(1.0, 1.0, 1.0, 1.0);
+  gl_FragColor =  vColor;
 }
 </script>
 
@@ -38,15 +38,6 @@ void main(void){
 (function(){
 var c = document.getElementById('canvas'),
     gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-
-// canvas縦横設定
-c.width = 600;
-c.height = 500;
-
-// webgl初期化
-gl.clearColor(0.0, 0.0, 0.0, 1.0);
-gl.clearDepth(1.0);
-gl.clear(gl.COLOR_BUFFER_BIT);
 
 // シェーダオブジェクトの生成
 var v_shader = create_shader('vs');
@@ -80,9 +71,6 @@ var vertex_color = [
 var vbo_position = create_vbo(vertex_position);
 var vbo_color = create_vbo(vertex_color);
 
-regist_vbo(vbo_position, 0);
-regist_vbo(vbo_color, 1);
-
 // minMatrix.jsを用いた行列関連処理
 var m = new matIV();
 
@@ -96,31 +84,75 @@ var mvpMatrix = m.identity(m.create());
 // uniformLocation取得
 var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
 
-// ビュー座標変換行列, プロジェクション座標変換行列
-m.lookAt([0, 0, 3.0], [0, 0, 0], [0, 1, 0], vMatrix);
-m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
-m.multiply(pMatrix, vMatrix, tmpMatrix);
+// ループカウント
+var count = 0;
 
-// 一つ目のモデル 移動するためのモデル座標変換行列
-m.translate(mMatrix, [1.5, 0.0, 0.0], mMatrix);
 
-// モデル x ビュー x プロジェクション
-m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+init();
 
-// uniformLocationへ座標変換行列を登録し描画(一つ目)
-gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-m.identity(mMatrix);
-m.translate(mMatrix, [-1.5, 0.0, 0.0], mMatrix);
+/**
+ * 初期動作
+ */
+function init() {
+  // canvas縦横設定
+  c.width = 300;
+  c.height = 300;
+  
+  // ビュー座標変換行列, プロジェクション座標変換行列
+  m.lookAt([0, 0, 3.0], [0, 0, 0], [0, 1, 0], vMatrix);
+  m.perspective(90, c.width / c.height, 0.1, 100, pMatrix);
+  m.multiply(pMatrix, vMatrix, tmpMatrix);
 
-m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  // シェーダ登録
+  regist_vbo(vbo_position, 0);
+  regist_vbo(vbo_color, 1);
 
-gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+  // ループ描画
+  loop();
+}
 
-// コンテキスト再描画
-gl.flush();
+/**
+ * 描画の工場ループ
+ */
+function loop() {
+    count++;
+
+  // webgl初期化
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearDepth(1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // ラジアン計算
+  var rad = (count % 360) * Math.PI / 180;
+
+  // モデル1 円の軌道を描き移動
+  var x = Math.cos(rad);
+  var y = Math.sin(rad);
+  m.identity(mMatrix);
+  m.translate(mMatrix, [x, y + 1.0, 0.0], mMatrix);
+
+  // モデル1の座標変換を行い、レンダリングする
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  // モデル2 Y軸中心に回転
+  m.identity(mMatrix);
+  m.translate(mMatrix, [1.0, -1.0, 0.0], mMatrix);
+  m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+
+  // モデル2の座標変換を行い、レンダリングする
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  
+  // コンテキスト再描画
+  gl.flush();
+  
+  setTimeout(loop, 1000 / 30);
+}
+
 
 /**
  * シェーダーオブジェクト生成
@@ -157,6 +189,7 @@ function create_shader(id) {
   }
 }
 
+
 /**
  * プログラムオブジェクトの生成、割当、リンク
  * @param {Object} vs vertex shader
@@ -182,6 +215,7 @@ function create_program(vs, fs) {
   }
 }
 
+
 /**
  * vbo生成
  * @param {Array} data
@@ -194,6 +228,7 @@ function create_vbo(data) {
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
   return vbo;
 }
+
 
 /**
  * vbo登録
