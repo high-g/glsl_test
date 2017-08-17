@@ -250,6 +250,29 @@ function regist_vbo(vbo, id) {
   gl.vertexAttribPointer(attLocation[id], attStride[id], gl.FLOAT, false, 0, 0);
 }
 
+
+/**
+ * ibo生成
+ * @param {Array} data
+ * @return ibo
+ */
+function create_ibo() {
+  // バッファオブジェクト作成
+  var ibo = gl.createBuffer();
+  
+  // バッファをバインド
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  
+  // バッファにデータセット
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+  
+  // バッファのバインドを無効化
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+  return ibo;
+}
+
+
 })();
 </script>
 
