@@ -10,6 +10,10 @@
 <body>
 <canvas id="canvas"></canvas>
 
+<p><input type="checkbox" id="cull"> enable culling</p>
+<p><input type="checkbox" id="front"> frontface</p>
+<p><input type="checkbox" id="depth"> enable depth test</p>
+
 <!-- vertex shader -->
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
@@ -35,11 +39,20 @@ void main(void){
 
 <!-- main script -->
 <script>
+// カリングとは
+// ポリゴンの裏表を判断基準にそのポリゴンをレンダリングするかどうか判断する機構のこと
+
+// 震度テスト
+// 手前にあるものが奥にあるものを覆い隠すという事象のテスト
+
 (function(){
 var c = document.getElementById('canvas');
-// canvas縦横設定
 c.width = 500;
 c.height = 300;
+
+var che_cullring = document.getElementById('cull');
+var che_front = document.getElementById('front');
+var che_depth_test = document.getElementById('depth');
 
 var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 
@@ -89,6 +102,7 @@ set_attribute([vbo_position, vbo_color], attLocation, attStride);
 // ibo生成
 var ibo = create_ibo(index);
 
+// iboをバインドして登録
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
 // uniformLocation取得
@@ -118,6 +132,9 @@ function init() {
   m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
   m.multiply(pMatrix, vMatrix, tmpMatrix);
 
+  // 震度テストの比較方法を指定
+  gl.depthFunc(gl.LEQUAL);
+
   // ループ描画
   loop();
 }
@@ -128,21 +145,49 @@ function init() {
 function loop() {
   count++;
 
-  // webgl初期化
+  // チェックボックスによって、カリングと深度テストを設定
+  if(che_cullring.checked) {
+    gl.enable(gl.CULL_FACE);
+  } else {
+    gl.disable(gl.CULL_FACE);
+  }
+
+  if(che_front.checked) {
+    gl.frontFace(gl.CCW);
+  } else {
+    gl.frontFace(gl.CW);
+  }
+  
+  if(che_depth_test.checked) {
+    gl.enable(gl.DEPTH_TEST);
+  } else {
+    gl.disable(gl.DEPTH_TEST);
+  }
+
+  // canvas初期化
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clearDepth(1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // ラジアン計算
   var rad = (count % 360) * Math.PI / 180;
+  var x = Math.cos(rad) * 1.5;
+  var z = Math.sin(rad) * 1.5;
+
+  // モデル座標変換行列の生成(x軸回転)
+  m.identity(mMatrix);
+  m.translate(mMatrix, [x, 0, z], mMatrix);
+  m.rotate(mMatrix, rad, [1, 0, 0], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
   // モデル座標変換行列の生成(y軸回転)
   m.identity(mMatrix);
+  m.translate(mMatrix, [-x, 0, -z], mMatrix);
   m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
   m.multiply(tmpMatrix, mMatrix, mvpMatrix);
   gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
-  
-  // インデックスを用いた描画
   gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
   
   // コンテキスト再描画
