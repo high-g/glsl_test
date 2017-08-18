@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>立体モデル(トーラス)の描画</title>
+<script src="minMatrix.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<p><input type="checkbox" id="cull"> enable culling</p>
+<p><input type="checkbox" id="front"> frontface</p>
+<p><input type="checkbox" id="depth"> enable depth test</p>
+
+<!-- vertex shader -->
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec4 color;
+uniform mat4 mvpMatrix;
+varying vec4 vColor; // vayring頂点シェーダとの橋渡し
+
+void main(void) {
+  vColor = color;
+  gl_Position = mvpMatrix * vec4(position, 1.0);
+}
+</script>
+
+<!-- fragment shader -->
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+varying vec4 vColor;
+
+void main(void){
+  gl_FragColor =  vColor;
+}
+</script>
+
+<!-- main script -->
+<script>
+// カリングとは
+// ポリゴンの裏表を判断基準にそのポリゴンをレンダリングするかどうか判断する機構のこと
+
+// 震度テスト
+// 手前にあるものが奥にあるものを覆い隠すという事象のテスト
+
+(function(){
+var c = document.getElementById('canvas');
+c.width = 500;
+c.height = 300;
+
+var che_cullring = document.getElementById('cull');
+var che_front = document.getElementById('front');
+var che_depth_test = document.getElementById('depth');
+
+var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+
+// シェーダオブジェクトの生成
+var v_shader = create_shader('vs');
+var f_shader = create_shader('fs');
+
+// プログラムオブジェクトの生成とリンク
+var prg = create_program(v_shader, f_shader);
+
+// attrubuteLocationを配列に取得
+var attLocation = [
+  gl.getAttribLocation(prg, 'position'),
+  gl.getAttribLocation(prg, 'color')
+];
+
+// attributeの要素数を配列に格納
+var attStride = [3, 4];
+
+// 頂点座標
+var position = [
+   0.0,  1.0, 0.0,
+   1.0,  0.0, 0.0,
+  -1.0,  0.0, 0.0,
+   0.0, -1.0, 0.0
+];
+
+var color = [
+  1.0, 0.0, 0.0, 1.0,
+  0.0, 1.0, 0.0, 1.0,
+  0.0, 0.0, 1.0, 1.0,
+  1.0, 1.0, 1.0, 1.0
+];
+
+var index = [
+  0, 1, 2,
+  1, 2, 3
+];
+
+// vbo生成
+var vbo_position = create_vbo(position);
+var vbo_color = create_vbo(color);
+
+// vbo登録
+set_attribute([vbo_position, vbo_color], attLocation, attStride);
+
+// ibo生成
+var ibo = create_ibo(index);
+
+// iboをバインドして登録
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+
+// uniformLocation取得
+var uniLocation = gl.getUniformLocation(prg, 'mvpMatrix');
+
+// minMatrix.jsを用いた行列関連処理
+var m = new matIV();
+
+// 各種行列の生成と初期化
+var mMatrix = m.identity(m.create());
+var vMatrix = m.identity(m.create());
+var pMatrix = m.identity(m.create());
+var tmpMatrix = m.identity(m.create());
+var mvpMatrix = m.identity(m.create());
+
+// ループカウント
+var count = 0;
+
+init();
+
+/**
+ * 初期動作
+ */
+function init() {
+  // ビュー座標変換行列, プロジェクション座標変換行列
+  m.lookAt([0, 0, 5.0], [0, 0, 0], [0, 1, 0], vMatrix);
+  m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
+  m.multiply(pMatrix, vMatrix, tmpMatrix);
+
+  // 震度テストの比較方法を指定
+  gl.depthFunc(gl.LEQUAL);
+
+  // ループ描画
+  loop();
+}
+
+/**
+ * 描画の工場ループ
+ */
+function loop() {
+  count++;
+
+  // チェックボックスによって、カリングと深度テストを設定
+  if(che_cullring.checked) {
+    gl.enable(gl.CULL_FACE);
+  } else {
+    gl.disable(gl.CULL_FACE);
+  }
+
+  if(che_front.checked) {
+    gl.frontFace(gl.CCW);
+  } else {
+    gl.frontFace(gl.CW);
+  }
+  
+  if(che_depth_test.checked) {
+    gl.enable(gl.DEPTH_TEST);
+  } else {
+    gl.disable(gl.DEPTH_TEST);
+  }
+
+  // canvas初期化
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.clearDepth(1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // ラジアン計算
+  var rad = (count % 360) * Math.PI / 180;
+  var x = Math.cos(rad) * 1.5;
+  var z = Math.sin(rad) * 1.5;
+
+  // モデル座標変換行列の生成(x軸回転)
+  m.identity(mMatrix);
+  m.translate(mMatrix, [x, 0, z], mMatrix);
+  m.rotate(mMatrix, rad, [1, 0, 0], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+
+  // モデル座標変換行列の生成(y軸回転)
+  m.identity(mMatrix);
+  m.translate(mMatrix, [-x, 0, -z], mMatrix);
+  m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
+  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+  
+  // コンテキスト再描画
+  gl.flush();
+  
+  window.requestAnimationFrame(loop);
+}
+
+
+/**
+ * シェーダーオブジェクト生成
+ * @param {String} id scriptタグのtype
+ * @return shader
+ */
+function create_shader(id) {
+  var shader,
+      scriptElement = document.getElementById(id);
+
+  switch(scriptElement.type) {
+    case 'x-shader/x-vertex':
+      shader = gl.createShader(gl.VERTEX_SHADER);
+      break;
+    case 'x-shader/x-fragment':
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+      break;
+    default :
+      return;
+  }
+
+  // ソース割当（登録）
+  gl.shaderSource(shader, scriptElement.text);
+  
+  // コンパイル
+  gl.compileShader(shader);
+  
+  if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    // 成功
+    return shader;
+  } else {
+    // 失敗
+    alert(gl.getShaderInfoLog(shader));
+  }
+}
+
+
+/**
+ * プログラムオブジェクトの生成、割当、リンク
+ * @param {Object} vs vertex shader
+ * @param {Object} fs fragment shader
+ * @return program
+ */
+function create_program(vs, fs) {
+  // プログラムオブジェクトの生成
+  var program = gl.createProgram();
+  
+  // プログラムオブジェクトにシェーダを割り当てる
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  
+  // シェーダをリンク
+  gl.linkProgram(program);
+  
+  if(gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    gl.useProgram(program);
+    return program;
+  } else {
+    alert(gl.getProgramInfoLog(program));
+  }
+}
+
+
+/**
+ * vbo生成
+ * @param {Array} data
+ * @return vbo
+ */
+function create_vbo(data) {
+  var vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  return vbo;
+}
+
+
+/**
+ * VBOをバインドし、登録する関数
+ * @param vbo
+ * @param attL
+ * @param attS
+ */
+function set_attribute(vbo, attL, attS) {
+  for(var i in vbo) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
+    gl.enableVertexAttribArray(attL[i]);
+    gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
+  }
+}
+
+
+/**
+ * ibo生成
+ * @param {Array} data
+ * @return ibo
+ */
+function create_ibo(data) {
+  // バッファオブジェクト作成
+  var ibo = gl.createBuffer();
+  
+  // バッファをバインド
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  
+  // バッファにデータセット
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+  
+  // バッファのバインドを無効化
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+  return ibo;
+}
+
+
+})();
+</script>
+
+
+</body>
+</html>
