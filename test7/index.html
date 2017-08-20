@@ -311,10 +311,10 @@ function create_ibo(data) {
 
 /**
  * トーラス生成
- * @param  {[type]} row    [description]
- * @param  {[type]} column [description]
- * @param  {[type]} irad   [description]
- * @param  {[type]} orad   [description]
+ * @param  {[type]} row    頂点数
+ * @param  {[type]} column パイプの分割
+ * @param  {[type]} irad   パイプそのもの半径
+ * @param  {[type]} orad   パイプから中心の距離
  * @return {Array}
  */
 function torus(row, column, irad, orad) {
@@ -346,6 +346,35 @@ function torus(row, column, irad, orad) {
     }
   }
   return [pos, col, idx];
+}
+
+
+/**
+ * [hsva description]
+ * @param  {[type]} h [description]
+ * @param  {[type]} s [description]
+ * @param  {[type]} v [description]
+ * @param  {[type]} a [description]
+ * @return {[type]}   [description]
+ */
+function hsva(h, s, v, a) {
+  if(s>1 || v>1 || a>1) { return; }
+  var th = h % 360;
+  var i = Math.floor(th / 60);
+  var f = th / 60 - i;
+  var m = v * (1 - s);
+  var n = v * (1 - s * f);
+  var k = v * (1 - s * (1 - f));
+  var color = [];
+  if(!s > 0 && !s < 0) {
+    color.push(v, v, v, a);
+  } else {
+    var r = [v, n, m, m, k, v];
+    var g = [k, v, v, n, m, m];
+    var b = [m, m, k, v, v, n];
+    color.push(r[i], g[i], b[i], a);
+  }
+  return color;
 }
 
 
