@@ -10,10 +10,6 @@
 <body>
 <canvas id="canvas"></canvas>
 
-<p><input type="checkbox" id="cull"> enable culling</p>
-<p><input type="checkbox" id="front"> frontface</p>
-<p><input type="checkbox" id="depth"> enable depth test</p>
-
 <!-- vertex shader -->
 <script id="vs" type="x-shader/x-vertex">
 attribute vec3 position;
@@ -45,10 +41,6 @@ void main(void){
 var c = document.getElementById('canvas');
 c.width = 500;
 c.height = 300;
-
-var che_cullring = document.getElementById('cull');
-var che_front = document.getElementById('front');
-var che_depth_test = document.getElementById('depth');
 
 var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 
@@ -114,8 +106,10 @@ function init() {
   m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
   m.multiply(pMatrix, vMatrix, tmpMatrix);
 
-  // 震度テストの比較方法を指定
+  // カリングと深度テストの有効
+  gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
+  gl.enable(gl.CULL_FACE);
 
   // ループ描画
   loop();
@@ -127,25 +121,6 @@ function init() {
 function loop() {
   count++;
 
-  // チェックボックスによって、カリングと深度テストを設定
-  if(che_cullring.checked) {
-    gl.enable(gl.CULL_FACE);
-  } else {
-    gl.disable(gl.CULL_FACE);
-  }
-
-  if(che_front.checked) {
-    gl.frontFace(gl.CCW);
-  } else {
-    gl.frontFace(gl.CW);
-  }
-  
-  if(che_depth_test.checked) {
-    gl.enable(gl.DEPTH_TEST);
-  } else {
-    gl.disable(gl.DEPTH_TEST);
-  }
-
   // canvas初期化
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clearDepth(1.0);
@@ -156,7 +131,7 @@ function loop() {
 
   // モデル座標変換行列の生成(x軸回転)
   m.identity(mMatrix);
-  m.rotate(mMatrix, rad, [1, 0, 0], mMatrix);
+  m.rotate(mMatrix, rad, [0, 1, 1], mMatrix);
   m.multiply(tmpMatrix, mMatrix, mvpMatrix);
   gl.uniformMatrix4fv(uniLocation, false, mvpMatrix);
   gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
@@ -294,7 +269,7 @@ function torus(row, column, irad, orad) {
       idx = [];
 
   for(var i=0; i<=row; i++) {
-    var r = Math.PI * 2 /row * i;
+    var r = Math.PI * 2 / row * i;
     var rr = Math.cos(r);
     var ry = Math.sin(r);
 
@@ -311,7 +286,7 @@ function torus(row, column, irad, orad) {
   
   for(i=0; i<row; i++) {
     for(ii=0; ii<column; ii++) {
-      r = (column + 1) * 1 + ii;
+      r = (column + 1) * i + ii;
       idx.push(r, r + column + 1, r+1);
       idx.push(r+column+1, r+column+2, r+1);
     }
