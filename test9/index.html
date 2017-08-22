@@ -15,11 +15,11 @@
 attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
-uniform mat4 mvpMatrix;
-uniform mat4 invMatrix;
-uniform vec3 lightDirection;
-uniform vec4 ambientColor;
-varying vec4 vColor; // vayring頂点シェーダとの橋渡し
+uniform   mat4 mvpMatrix;
+uniform   mat4 invMatrix;
+uniform   vec3 lightDirection;
+uniform   vec4 ambientColor;
+varying   vec4 vColor;
 
 void main(void) {
   vec3 invLight = normalize(invMatrix * vec4(lightDirection, 0.0)).xyz;
