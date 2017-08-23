@@ -9,6 +9,8 @@
 <body>
 <canvas id="canvas"></canvas>
 
+<p><label><input type="checkbox" id="check">チェック</label></p>
+
 <!-- vertex shader -->
 <script id="vs" type="x-shader/x-vertex">
 </script>
@@ -17,9 +19,74 @@
 <script id="fs" type="x-shader/x-fragment">
 </script>
 
+<script src="minMatrix.js"></script>
+
 <!-- main script -->
 <script>
 (function(){
+
+var c, cw, ch, mx, my, gl, run, eCheck, startTime,
+    time = 0.0,
+    tempTime = 0.0,
+    fps = 1000 / 30,
+    uniLocation = [];
+
+init();
+
+
+function init() {
+  c = document.getElementById('canvas');
+  cw = 512;
+  ch = 512;
+  c.width = cw;
+  c.height = ch;
+
+  eCheck = document.getElementById('check');
+  
+  c.addEventListener('mousemove', mouseMove, true);
+  eCheck.addEventListener('change', checkChange, true);
+  
+  gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+  
+  var prg = create_program(create_shader('vs'), create_shader('fs'));
+  run = (prg != null);
+  if(!run) { eCheck.checked = false; }
+  uniLocation[0] = gl.getUniformLocation(prg, 'time');
+  uniLocation[1] = gl.getUniformLocation(prg, 'mouse');
+  uniLocation[2] = gl.getUniformLocation(prg, 'resolution');
+  
+  var position = [
+    -1.0,  1.0, 0.0,
+     1.0,  1.0, 0.0,
+    -1.0, -1.0, 0.0,
+     1.0, -1.0, 0.0
+  ];
+  
+  var index = [
+    0, 2, 1,
+    1, 2, 3
+  ];
+  
+  var vPosition = create_vbo(poosition);
+  var vIndex = create_ibo(index);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vPosition);
+  gl.enableVertexAttribArray(vAttLocation);
+  gl.vertexAttribPointer(vAttLocation, 3, gl.FLOAT, false, 0, 0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
+  
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  mx = 0.5;
+  my = 0.5;
+  startTime = new Date().getTime();
+  
+  render();
+}
+
+
+function mouseMove() {
+  
+}
+
 })();
 </script>
 </body>
