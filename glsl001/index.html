@@ -5,18 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>GLSL だけでレンダリングする</title>
+<style>
+* {
+  text-align: center;
+  margin: 10px auto;
+  padding: 0;
+}
+canvas {
+  box-shadow: 0 0 0 1px gray;
+}
+</style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
 
 <p><label><input type="checkbox" id="check">チェック</label></p>
 
-<!-- vertex shader -->
-<script id="vs" type="x-shader/x-vertex">
-</script>
-
 <!-- fragment shader -->
 <script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform float time;
+uniform vec2 mouse;
+uniform vec2 resolution;
+
+void main(void) {
+  vec2 p = (gl_FragCood.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+  vec2 color = (vec2(1.0) + p.xy) * 0.5;
+  gl_FragColor = vec4(color, 0.0, 1.0);
+}
+</script>
+
+<!-- vertex shader -->
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main(void) {
+  gl_Position = vec4(position, 1.0);
+}
 </script>
 
 <script src="minMatrix.js"></script>
