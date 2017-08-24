@@ -25,10 +25,11 @@
 <script>
 (function(){
 
-var c, cw, ch, mx, my, gl, run, eCheck, startTime,
+var c, mx, my, gl, run, eCheck, startTime,
+    cw = 512,
+    ch = 512,
     time = 0.0,
     tempTime = 0.0,
-    fps = 1000 / 30,
     uniLocation = [];
 
 init();
@@ -36,8 +37,6 @@ init();
 
 function init() {
   c = document.getElementById('canvas');
-  cw = 512;
-  ch = 512;
   c.width = cw;
   c.height = ch;
 
@@ -99,12 +98,22 @@ function render() {
   gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
   gl.flush();
   
-  setTimeout(render, fps);
+  window.requestAnimationFrame(render);
 }
 
+function checkChange(e) {
+  run = e.currentTarget.checked;
+  if(run) {
+    stratTime = new Date().getTime();
+    render();
+  } else {
+    tempTime += time;
+  }
+}
 
-function mouseMove() {
-  
+function mouseMove(e) {
+  mx = e.offsetY / cw;
+  my = e.offsetY / ch;
 }
 
 })();
