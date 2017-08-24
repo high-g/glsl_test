@@ -82,6 +82,26 @@ function init() {
   render();
 }
 
+// レンダリング処理
+function render() {
+  if(!run) { return; }
+  
+  // 時間管理
+  time = (new Date().getTime() - startTime) * 0.01;
+  
+  // カラーバッファをクリア
+  gl.clear(gl.COLOR_BUUFFER_BIT);
+  
+  gl.uniform1fv(uniLocation[0], time + tempTime);
+  gl.uniform2fv(uniLocation[1], [mx, my]);
+  gl.uniform2fv(uniLocation[2], [cw, ch]);
+  
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+  gl.flush();
+  
+  setTimeout(render, fps);
+}
+
 
 function mouseMove() {
   
