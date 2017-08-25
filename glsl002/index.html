@@ -56,6 +56,7 @@ var c, mx, my, gl, run, eCheck, startTime,
     ch = 512,
     time = 0.0,
     tempTime = 0.0,
+    fps = 1000 / 30,
     uniLocation = [];
 
 init();
@@ -126,7 +127,8 @@ function render() {
   gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
   gl.flush();
   
-  window.requestAnimationFrame(render);
+  setTimeout(render, fps);
+  //window.requestAnimationFrame(render);
 }
 
 /**
