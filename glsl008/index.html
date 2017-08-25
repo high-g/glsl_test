@@ -35,8 +35,16 @@ void main(void) {
   vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
 
   vec2 v = vec2(0.0, 1.0);
+  
+  // float u = sin((atan(p.y, p.x) + time * 0.5) * 6.0);
+  // float t = 0.01 / abs(u - length(p));
+  
+  // wave ring
+  // float u = sin((atan(p.y, p.x) + time * 0.5) * 20.0) * 0.01;
+  // float t = 0.01 / abs(0.5 + u - length(p));
 
-  float u = sin((atan(p.y, p.x) + time * 0.5) * 6.0);
+  // flower
+  float u = abs(sin((atan(p.y, p.x) - length(p) + time) * 10.0) * 0.5) + 0.2;
   float t = 0.01 / abs(u - length(p));
 
   gl_FragColor = vec4(vec3(t), 1.0);
