@@ -115,7 +115,7 @@ function render() {
   if(!run) { return; }
   
   // 時間管理
-  time = (new Date().getTime() - startTime) * 0.01;
+  time = (new Date().getTime() - startTime) * 0.001;
   
   // カラーバッファをクリア
   gl.clear(gl.COLOR_BUUFFER_BIT);
@@ -165,7 +165,6 @@ function create_shader(id) {
     alert(gl.getShaderInfoLog(shader));
   }
 }
-
 
 /**
  * プログラムオブジェクトの生成、割当、リンク
@@ -239,7 +238,7 @@ function create_ibo(data) {
 
 
 function mouseMove(e) {
-  mx = e.offsetY / cw;
+  mx = e.offsetX / cw;
   my = e.offsetY / ch;
 }
 
