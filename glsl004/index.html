@@ -15,11 +15,13 @@ canvas {
   box-shadow: 0 0 0 1px gray;
 }
 </style>
+<script src="minMatrix.js"></script>
 </head>
 <body>
 <canvas id="canvas"></canvas>
 
 <p><label><input type="checkbox" id="check">チェック</label></p>
+
 
 <!-- fragment shader -->
 <script id="fs" type="x-shader/x-fragment">
@@ -31,8 +33,10 @@ uniform vec2 resolution;
 void main(void) {
   vec2 m = vec2(mouse.x * 2.0 - 1.0, -mouse.y * 2.0 + 1.0);
   vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
-  float t = 0.1 / length(m - p);
-  t = pow(t, 6.0);
+
+  // ring
+  float t = 0.02 / abs(0.5 - length(p));
+
   gl_FragColor = vec4(vec3(t), 1.0);
 }
 </script>
@@ -46,10 +50,6 @@ void main(void) {
   gl_Position = vec4(position, 1.0);
 }
 </script>
-
-
-<!-- library -->
-<script src="minMatrix.js"></script>
 
 
 <!-- main script -->
