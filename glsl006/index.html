@@ -35,7 +35,7 @@ void main(void) {
   vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
 
   vec2 v = vec2(0.0, 1.0);
-  float t = dot(p, v); 
+  float t = dot(p, v) / (length(p) * length(v)); 
 
   gl_FragColor = vec4(vec3(t), 1.0);
 }
