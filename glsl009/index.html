@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>マンデルブロ集合</title>
+<style>
+* {
+  text-align: center;
+  margin: 10px auto;
+  padding: 0;
+}
+canvas {
+  box-shadow: 0 0 0 1px gray;
+}
+</style>
+<script src="minMatrix.js"></script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<p><label><input type="checkbox" id="check">チェック</label></p>
+
+
+<!-- fragment shader -->
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform float time;
+uniform vec2 mouse;
+uniform vec2 resolution;
+
+void main(void) {
+  vec2 m = vec2(mouse.x * 2.0 - 1.0, -mouse.y * 2.0 + 1.0);
+  vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+
+  vec2 v = vec2(0.0, 1.0);
+  
+  // float u = sin((atan(p.y, p.x) + time * 0.5) * 6.0);
+  // float t = 0.01 / abs(u - length(p));
+  
+  // wave ring
+  // float u = sin((atan(p.y, p.x) + time * 0.5) * 20.0) * 0.01;
+  // float t = 0.01 / abs(0.5 + u - length(p));
+
+  // flower
+  float u = abs(sin((atan(p.y, p.x) - length(p) + time) * 10.0) * 0.5) + 0.2;
+  float t = 0.01 / abs(u - length(p));
+
+  gl_FragColor = vec4(vec3(t), 1.0);
+}
+</script>
+
+
+<!-- vertex shader -->
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main(void) {
+  gl_Position = vec4(position, 1.0);
+}
+</script>
+
+
+<!-- main script -->
+<script>
+(function(){
+
+var c, mx, my, gl, run, eCheck, startTime,
+    cw = 512,
+    ch = 512,
+    time = 0.0,
+    tempTime = 0.0,
+    fps = 1000 / 30,
+    uniLocation = [];
+
+init();
+
+
+function init() {
+  c = document.getElementById('canvas');
+  c.width = cw;
+  c.height = ch;
+
+  eCheck = document.getElementById('check');
+  
+  c.addEventListener('mousemove', mouseMove, true);
+  eCheck.addEventListener('change', checkChange, true);
+  
+  gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+  
+  var prg = create_program(create_shader('vs'), create_shader('fs'));
+  run = (prg != null);
+  if(!run) { eCheck.checked = false; }
+  uniLocation[0] = gl.getUniformLocation(prg, 'time');
+  uniLocation[1] = gl.getUniformLocation(prg, 'mouse');
+  uniLocation[2] = gl.getUniformLocation(prg, 'resolution');
+  
+  var position = [
+    -1.0,  1.0, 0.0,
+     1.0,  1.0, 0.0,
+    -1.0, -1.0, 0.0,
+     1.0, -1.0, 0.0
+  ];
+  
+  var index = [
+    0, 2, 1,
+    1, 2, 3
+  ];
+  
+  var vPosition = create_vbo(position);
+  var vIndex = create_ibo(index);
+  var vAttLocation = gl.getAttribLocation(prg, 'position');
+  gl.bindBuffer(gl.ARRAY_BUFFER, vPosition);
+  gl.enableVertexAttribArray(vAttLocation);
+  gl.vertexAttribPointer(vAttLocation, 3, gl.FLOAT, false, 0, 0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
+  
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+  mx = 0.5;
+  my = 0.5;
+  startTime = new Date().getTime();
+  
+  render();
+}
+
+
+// レンダリング処理
+function render() {
+  if(!run) { return; }
+  
+  // 時間管理
+  time = (new Date().getTime() - startTime) * 0.001;
+  
+  // カラーバッファをクリア
+  gl.clear(gl.COLOR_BUUFFER_BIT);
+  
+  gl.uniform1f(uniLocation[0], time + tempTime);
+  gl.uniform2fv(uniLocation[1], [mx, my]);
+  gl.uniform2fv(uniLocation[2], [cw, ch]);
+  
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+  gl.flush();
+  
+  setTimeout(render, fps);
+  //window.requestAnimationFrame(render);
+}
+
+/**
+ * シェーダーオブジェクト生成
+ * @param {String} id scriptタグのtype
+ * @return shader
+ */
+function create_shader(id) {
+  var shader,
+      scriptElement = document.getElementById(id);
+
+  switch(scriptElement.type) {
+    case 'x-shader/x-vertex':
+      shader = gl.createShader(gl.VERTEX_SHADER);
+      break;
+    case 'x-shader/x-fragment':
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+      break;
+    default :
+      return;
+  }
+
+  // ソース割当（登録）
+  gl.shaderSource(shader, scriptElement.text);
+  
+  // コンパイル
+  gl.compileShader(shader);
+  
+  if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    // 成功
+    return shader;
+  } else {
+    // 失敗
+    alert(gl.getShaderInfoLog(shader));
+  }
+}
+
+/**
+ * プログラムオブジェクトの生成、割当、リンク
+ * @param {Object} vs vertex shader
+ * @param {Object} fs fragment shader
+ * @return program
+ */
+function create_program(vs, fs) {
+  // プログラムオブジェクトの生成
+  var program = gl.createProgram();
+  
+  // プログラムオブジェクトにシェーダを割り当てる
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  
+  // シェーダをリンク
+  gl.linkProgram(program);
+  
+  if(gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    gl.useProgram(program);
+    return program;
+  } else {
+    alert(gl.getProgramInfoLog(program));
+  }
+}
+
+/**
+ * vbo生成
+ * @param {Array} data
+ * @return vbo
+ */
+function create_vbo(data) {
+  var vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  return vbo;
+}
+
+function checkChange(e) {
+  run = e.currentTarget.checked;
+  if(run) {
+    stratTime = new Date().getTime();
+    render();
+  } else {
+    tempTime += time;
+  }
+}
+
+
+/**
+ * ibo生成
+ * @param {Array} data
+ * @return ibo
+ */
+function create_ibo(data) {
+  // バッファオブジェクト作成
+  var ibo = gl.createBuffer();
+  
+  // バッファをバインド
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  
+  // バッファにデータセット
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
+  
+  // バッファのバインドを無効化
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+  return ibo;
+}
+
+
+function mouseMove(e) {
+  mx = e.offsetX / cw;
+  my = e.offsetY / ch;
+}
+
+})();
+</script>
+</body>
+</html>
