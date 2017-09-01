@@ -16,7 +16,7 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
 uniform   mat4 mvpMatrix;
-varying   vec4 vNormal;
+varying   vec3 vNormal;
 varying   vec4 vColor;
 
 void main(void) {
@@ -29,10 +29,22 @@ void main(void) {
 <!-- fragment shader -->
 <script id="fs" type="x-shader/x-fragment">
 precision mediump float;
+
+uniform mat4 invMatrix;
+uniform vec3 lightDirection;
+uniform vec3 eyeDirection;
+uniform vec4 ambientColor;
+varying vec3 vNormal;
 varying vec4 vColor;
 
 void main(void){
-  gl_FragColor =  vColor;
+  vec3 invLight  = normalize(invMatrix * vec4(lightDirection, 0.0)).xyz;
+  vec3 invEye    = normalize(invMatrix * vec4(eyeDirection, 0.0)).xyz;
+  vec3 halfLE    = normalize(invLight + invEye);
+  float diffuse  = clamp(dot(vNormal, invLight), 0.0, 1.0);
+  float specular = pow(clamp(dot(vNormal, halfLE), 0.0, 1.0), 50.0);
+  vec4 destColor = vColor * vec4(vec3(diffuse), 1.0) + vec4(vec3(specular), 1.0) + ambientColor;
+  gl_FragColor   = destColor;
 }
 </script>
 
@@ -65,7 +77,7 @@ var attLocation = [
 var attStride = [3, 3, 4];
 
 // トーラスの頂点データを作成
-var torusData = torus(32, 32, 1.0, 2.0);
+var torusData = torus(64, 64, 1.5, 3.0);
 var position = torusData[0];
 var normal = torusData[1];
 var color = torusData[2];
@@ -106,19 +118,19 @@ var mvpMatrix = m.identity(m.create());
 var invMatrix = m.identity(m.create());
 
 // 平行光源の向き
-var lightDirection = [-0.5, 0.5, 0.5];
-
-// 視点ベクトル
-var eyeDirection = [0.0, 0.0, 20.0];
+var lightDirection = [-0.5, 1.0, 0.5];
 
 // 環境光の色
 var ambientColor = [0.1, 0.1, 0.1, 1.0];
+
+// 視点ベクトル
+var eyeDirection = [0.0, 0.0, 20.0];
 
 // ループカウント
 var count = 0;
 
 // ビュー座標変換行列, プロジェクション座標変換行列
-m.lookAt([0, 0, 20.0], [0, 0, 0], [0, 1, 0], vMatrix);
+m.lookAt(eyeDirection, [0, 0, 0], [0, 1, 0], vMatrix);
 m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
 m.multiply(pMatrix, vMatrix, tmpMatrix);
 
@@ -165,6 +177,7 @@ function loop() {
   // コンテキスト再描画
   gl.flush();
   
+  //setTimeout(loop, 1000/ 30);
   window.requestAnimationFrame(loop);
 }
 
