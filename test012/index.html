@@ -16,6 +16,7 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
 uniform   mat4 mvpMatrix;
+uniform   mat4 mMatrix;
 varying   vec3 vPosition;
 varying   vec3 vNormal;
 varying   vec4 vColor;
@@ -97,6 +98,9 @@ var sNormal = create_vbo(sphereData.n);
 var sColor = create_vbo(sphereData.c);
 var sVBOList = [sPosition, sNormal, sColor];
 
+// 球体用IBO
+var sIndex = create_ibo(sphereData.i);
+
 // uniformLocation取得
 var uniLocation = [
   gl.getUniformLocation(prg, 'mvpMatrix'),
@@ -167,9 +171,7 @@ function loop() {
   m.translate(mMatrix, [tx, -ty, tz], mMatrix);
   m.rotate(mMatrix, -rad, [0, 1, 1], mMatrix);
   m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-
-  // モデル座標変換行列から逆行列を生成
-  m.inverse(mMatrix, invMatrix);
+  m.inverse(mMatrix, invMatrix); // モデル座標変換行列から逆行列を生成
   
   // uniform変数の登録
   gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
@@ -178,10 +180,24 @@ function loop() {
   gl.uniform3fv(uniLocation[3], lightPosition);
   gl.uniform3fv(uniLocation[4], eyeDirection);
   gl.uniform4fv(uniLocation[5], ambientColor);
-  
-  // モデル描画
-  gl.drawElements(gl.TRIANGLES, torusData.i.length, gl.UNSIGNED_SHORT, 0);
-  
+  gl.drawElements(gl.TRIANGLES, torusData.i.length, gl.UNSIGNED_SHORT, 0); // モデル描画
+
+  // 球体のVBOとIBOをセット
+  set_attribute(sVBOList, attLocation, attStride);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sIndex);
+
+  // モデル座標変換行列の生成
+  m.identity(mMatrix);
+  m.translate(mMatrix, [-tx, ty, tz], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  m.inverse(mMatrix, invMatrix);
+
+  // uniform変数の登録と描画
+  gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
+  gl.uniformMatrix4fv(uniLocation[1], false, mMatrix);
+  gl.uniformMatrix4fv(uniLocation[2], false, invMatrix);
+  gl.drawElements(gl.TRIANGLES, sphereData.i.length, gl.UNSIGNED_SHORT, 0);
+
   // コンテキスト再描画
   gl.flush();
   
