@@ -74,12 +74,12 @@ var prg = create_program(v_shader, f_shader);
 // attrubuteLocationを配列に取得
 var attLocation = [
   gl.getAttribLocation(prg, 'position'),
-  gl.getAttribLocation(prg, 'normal'),
-  gl.getAttribLocation(prg, 'color')
+  gl.getAttribLocation(prg, 'color'),
+  gl.getAttribLocation(prg, 'textureCoord')
 ];
 
 // attributeの要素数を配列に格納
-var attStride = [3, 3, 4];
+var attStride = [3, 4, 3];
 
 // トーラスの頂点データを作成
 var torusData = torus(64, 64, 0.5, 1.5, [0.75, 0.25, 0.25, 1.0]);
