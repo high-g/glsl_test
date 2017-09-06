@@ -31,7 +31,7 @@ void main(void) {
 precision mediump float;
 
 uniform sampler2D texture0;
-uniform samplar2D texture1;
+uniform sampler2D texture1;
 varying vec4      vColor;
 varying vec2      vTextureCoord;
 
@@ -113,7 +113,8 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iIndex);
 // uniformLocation取得
 var uniLocation = [
   gl.getUniformLocation(prg, 'mvpMatrix'),
-  gl.getUniformLocation(prg, 'texture')
+  gl.getUniformLocation(prg, 'texture0'),
+  gl.getUniformLocation(prg, 'texture1')
 ];
 
 // minMatrix.jsを用いた行列関連処理
@@ -133,12 +134,10 @@ m.multiply(pMatrix, vMatrix, tmpMatrix);
 gl.enable(gl.DEPTH_TEST);
 gl.depthFunc(gl.LEQUAL);
 
-// 有効にするテクスチャユニットを指定
-gl.activeTexture(gl.TEXTURE0);
-
 // テクスチャ
-var texture = null;
-create_texture('texture.png');
+var texture0, texture1;
+create_texture('texture0.png', 0);
+create_texture('texture1.png', 1);
 
 // ループ描画
 var count = 0;
@@ -158,11 +157,15 @@ function loop() {
   // ラジアン計算
   var rad = (count % 360) * Math.PI / 180;
 
-  // テクスチャをバインド
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  
-  // uniform変数にテクスチャ登録
+  // テクスチャをバインド後、登録1
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, texture0);
   gl.uniform1i(uniLocation[1], 0);
+  
+  // テクスチャをバインド後、登録2
+  gl.activeTexture(gl.TEXTURE1);
+  gl.bindTexture(gl.TEXTURE_2D, texture1);
+  gl.uniform1i(uniLocation[2], 1);
   
   // モデル座標変換行列の生成
   m.identity(mMatrix);
@@ -297,9 +300,10 @@ function create_ibo(data) {
 /**
  * テクスチャ生成
  * @param  {[type]} source [description]
+ * @param  {[type]} num [description]
  * @return {[type]}        [description]
  */
-function create_texture(source) {
+function create_texture(source, num) {
   var img = new Image();
   img.onload = function() {
     var tex = gl.createTexture();
@@ -307,7 +311,14 @@ function create_texture(source) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.bindTexture(gl.TEXTURE_2D, null);
-    texture = tex;
+    switch(num) {
+      case 0:
+        texture0 = tex;
+        break;
+      case 1:
+        texture1 = tex;
+        break;
+    }
   };
   img.src = source;
 }
