@@ -42,9 +42,8 @@ void main(void){
 
 <!-- main script -->
 <script>
-// 立体的なトーラスの描画
+(function() {
 
-(function(){
 var c = document.getElementById('canvas');
 c.width = 500;
 c.height = 300;
@@ -160,9 +159,12 @@ function loop() {
   // テクスチャをバインド
   gl.bindTexture(gl.TEXTURE_2D, texture);
   
+  // uniform変数にテクスチャ登録
+  gl.uniform1i(uniLocation[1], 0);
+  
   // モデル座標変換行列の生成
   m.identity(mMatrix);
-  m.rotate(mMatrix, rad, [0, 1, 0], mvpMatrix);
+  m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
   m.multiply(tmpMatrix, mMatrix, mvpMatrix);
 
   // uniform変数の登録
@@ -297,7 +299,6 @@ function create_ibo(data) {
  */
 function create_texture(source) {
   var img = new Image();
-  
   img.onload = function() {
     var tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
