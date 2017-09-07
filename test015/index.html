@@ -47,8 +47,8 @@ void main(void){
 (function() {
 
 var c = document.getElementById('canvas');
-c.width = 500;
-c.height = 300;
+c.width = 750;
+c.height = 450;
 
 var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 
@@ -181,6 +181,27 @@ function loop() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
   render([-3.75, 2.0, 0.0]);
+
+  // 3
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST_MIPMAP_NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  render([-1.25, 2.0, 0.0]);
+
+  // 4
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  render([1.25, 2.0, 0.0]);
+
+  // 5
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  render([3.75, 2.0, 0.0]);
 
   // モデル座標変換行列の生成
   m.identity(mMatrix);
@@ -336,7 +357,7 @@ function create_texture(source, num) {
 
 /**
  * render
- * @param  {[type]} trans [description]
+ * @param  {array} trans [x, y, z]
  * @return {[type]}       [description]
  */
 function render(trans) {
