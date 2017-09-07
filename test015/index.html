@@ -210,6 +210,7 @@ function loop() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
   render([6.25, 2.0, 0.0]);
 
+
   // モデル座標変換行列の生成
   m.identity(mMatrix);
   m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
