@@ -88,7 +88,7 @@ var color = [
 // テクスチャ座標
 var textureCoord = [
   -0.75, -0.75,
-   1.75,  0.75,
+   1.75, -0.75,
   -0.75,  1.75,
    1.75,  1.75
 ];
@@ -210,11 +210,20 @@ function loop() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
   render([6.25, 2.0, 0.0]);
 
+  // 7
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+  render([-2.5, -2.0, 0.0]);
 
-  // モデル座標変換行列の生成
-  m.identity(mMatrix);
-  m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
-  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  // 8
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
+  render([0.0, -2.0, 0.0]);
+
+  // 9
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  render([2.5, -2.0, 0.0]);
 
   // コンテキスト再描画
   gl.flush();
