@@ -61,6 +61,47 @@ void main(void) {
 <script>
 (function() {
 
+var elmTransparency = document.getElementById('transparency');
+var elmAdd = document.getElementById('add');
+var elmRange = document.getElementById('range');
+var c = document.getElementById('canvas');
+c.width = 500;
+c.height = 300;
+
+var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+
+var v_shader = create_shader('vs');
+var f_shader = create_shader('fs');
+
+/**
+ * [create_shader description]
+ * @param  {[type]} id [description]
+ * @return {[type]}    [description]
+ */
+function create_shader(id) {
+  var scriptElement = document.getElementById(id),
+      shader;
+
+  switch(scriptElement.type) {
+    case 'x-shader/x-vertex':
+      shader = gl.createShader(gl.VERTEX_SHADER);
+      break;
+
+    case 'x-shader/x-fragment':
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+      break;
+  }
+  
+  gl.shaderSource(shader, scriptElement.text);
+  gl.compileShader(shader);
+
+  if(gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    return shader;
+  } else {
+    alert(gl.getShaderInfoLog(shader));
+  }
+}
+
 })();
 </script>
 </body>
