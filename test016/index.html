@@ -73,6 +73,8 @@ var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
 var v_shader = create_shader('vs');
 var f_shader = create_shader('fs');
 
+var prg = create_program(v_shader, f_shader);
+
 /**
  * [create_shader description]
  * @param  {[type]} id [description]
@@ -99,6 +101,28 @@ function create_shader(id) {
     return shader;
   } else {
     alert(gl.getShaderInfoLog(shader));
+  }
+}
+
+/**
+ * [create_program description]
+ * @param  {[type]} vs [description]
+ * @param  {[type]} fs [description]
+ * @return {[type]}    [description]
+ */
+function create_program(vs, fs) {
+  var program = gl.createProgram();
+  
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  
+  if(gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    gl.useProgram(program);
+    return program;
+  } else {
+    console.log(1);
+    alert(gl.getProgramInfoLog(program));
   }
 }
 
