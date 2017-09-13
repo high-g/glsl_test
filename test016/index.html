@@ -122,6 +122,10 @@ var vTextureCoord = create_vbo(textureCoord);
 var VBOList = [vPosition, vColor, vTextureCoord];
 var iIndex = create_ibo(index);
 
+// VBOとIBOの登録
+set_attribute(VBOList, attLocation,attStride);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iIndex);
+
 /**
  * シェーダの生成
  * @param  {[type]} id [description]
@@ -196,6 +200,20 @@ function create_ibo(data) {
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   return ibo;
+}
+
+/**
+ * VBO登録
+ * @param {[type]} vbo  [description]
+ * @param {[type]} attL [description]
+ * @param {[type]} attS [description]
+ */
+function set_attribute(vbo, attL, attS) {
+  for(var i in vbo) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo[i]);
+    gl.enableVertexAttribArray(attL[i]);
+    gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
+  }
 }
 
 })();
