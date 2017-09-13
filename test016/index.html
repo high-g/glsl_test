@@ -126,6 +126,36 @@ var iIndex = create_ibo(index);
 set_attribute(VBOList, attLocation,attStride);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iIndex);
 
+// uniformLocationを配列に取得
+var uniformLocation = [
+  gl.getUniformLocation(prg, 'mvpMatrix'),
+  gl.getUniformLocation(prg, 'vertexAlpha'),
+  gl.getUniformLocation(prg, 'texture'),
+  gl.getUniformLocation(prg, 'useTexture')
+];
+
+// 各種行列の生成と初期化
+var m = new matIV();
+var mMatrix = m.identity(m.create());
+var vMatrix = m.identity(m.create());
+var pMatrix = m.identity(m.create());
+var tmpMatrix = m.identity(m.create());
+var mvpMatrix = m.identity(m.create());
+
+// 深度テストを有効にする
+gl.enable(gl.DEPTH_TEST);
+gl.depthFunc(gl.LEQUAL);
+
+// ビュー、プロジェクション座標変換行列
+m.lookAt([0.0, 0.0, 5.0], [0,0,0], [0,1,0], vMatrix);
+m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
+m.multiply(pMatrix, vMatrix, tmpMatrix);
+
+// テクスチャ関連
+var texture = null;
+create_texture('texture0.png');
+gl.activeTexture(gl.TEXTURE0);
+
 /**
  * シェーダの生成
  * @param  {[type]} id [description]
@@ -214,6 +244,34 @@ function set_attribute(vbo, attL, attS) {
     gl.enableVertexAttribArray(attL[i]);
     gl.vertexAttribPointer(attL[i], attS[i], gl.FLOAT, false, 0, 0);
   }
+}
+
+/**
+ * テクスチャ生成
+ * @param  {[type]} source [description]
+ * @return {[type]}        [description]
+ */
+function create_texture(source) {
+  var img = new Image();
+  
+  img.onload = function() {
+    // テクスチャオブジェクトを生成し、バインド・イメージ適用・ミップマップ生成
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    
+    // テクスチャパラメータの設定
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+
+    // 変数代入後バインド無効化
+    texture = tex;
+    gl.bindTexture(gl.TEXTURE_2D, null);
+  };
+  img.src = source;
 }
 
 })();
