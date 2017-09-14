@@ -156,6 +156,14 @@ var texture = null;
 create_texture('texture0.png');
 gl.activeTexture(gl.TEXTURE0);
 
+var count = 0;
+
+// 恒常ループ
+(function() {
+  // エレメントから値を取得しブレンドタイプを設定
+  if(elmTransparency.checked) { blend_type(0); }
+})();
+
 /**
  * シェーダの生成
  * @param  {[type]} id [description]
@@ -272,6 +280,22 @@ function create_texture(source) {
     gl.bindTexture(gl.TEXTURE_2D, null);
   };
   img.src = source;
+}
+
+/**
+ * ブレンドタイプ設定
+ * @param  {[type]} prm [description]
+ * @return {[type]}     [description]
+ */
+function blend_type(prm) {
+  switch(prm) {
+    case 0:
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+      break;
+    case 1:
+      gl.brendFunc(gl.SRC_ALPHA, gl.ONE);
+      break;
+  }
 }
 
 })();
