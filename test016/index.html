@@ -162,6 +162,47 @@ var count = 0;
 (function() {
   // エレメントから値を取得しブレンドタイプを設定
   if(elmTransparency.checked) { blend_type(0); }
+  if(elmAdd.checked) { blend_type(1); }
+  
+  // エレメントからアルファ成分を取得
+  var vertexAlpha = parseFloat(elmRange.value / 100);
+  
+  // canvas初期化
+  gl.clearColor(0.0, 0.75, 0.75, 1.0);
+  gl.clearDepth(1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  
+  // カウンタ処理
+  count++;
+  var rad = (count % 360) * Math.PI() / 180;
+  
+  // モデル座標変換行列の生成
+  m.identity(mMatrix);
+  m.translate(mMatrix, [0.25, 0.25, -0.25], mMatrix);
+  m.rotate(mMatrix, rad, [0,1,0], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  
+  // テクスチャのバインド
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  
+  // ブレンディングを無効にする
+  gl.disable(gl.BLEND);
+  
+  // uniform変数の登録と描画
+  gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
+  gl.uniform1f(uniLocation[1], 1.0);
+  gl.uniform1f(uniLocation[2], 0);
+  gl.uniform1f(uniLocation[3], true);
+  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+  
+  // モデル座標変換行列の生成
+  m.identity(mMatrix);
+  m.translate(mMatrix, [-0.25, -0.25, 0.25], mMatrix);
+  m.rotate(mMatrix, rad, [0,0,1], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  
+  // テクスチャのバインドを解除
+  
 })();
 
 /**
