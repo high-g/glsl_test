@@ -174,7 +174,7 @@ var count = 0;
   
   // カウンタ処理
   count++;
-  var rad = (count % 360) * Math.PI() / 180;
+  var rad = (count % 360) * Math.PI / 180;
   
   // モデル座標変換行列の生成
   m.identity(mMatrix);
@@ -189,10 +189,10 @@ var count = 0;
   gl.disable(gl.BLEND);
   
   // uniform変数の登録と描画
-  gl.uniformMatrix4fv(uniLocation[0], false, mvpMatrix);
-  gl.uniform1f(uniLocation[1], 1.0);
-  gl.uniform1f(uniLocation[2], 0);
-  gl.uniform1f(uniLocation[3], true);
+  gl.uniformMatrix4fv(uniformLocation[0], false, mvpMatrix);
+  gl.uniform1f(uniformLocation[1], 1.0);
+  gl.uniform1f(uniformLocation[2], 0);
+  gl.uniform1f(uniformLocation[3], true);
   gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
   
   // モデル座標変換行列の生成
@@ -202,7 +202,22 @@ var count = 0;
   m.multiply(tmpMatrix, mMatrix, mvpMatrix);
   
   // テクスチャのバインドを解除
+  gl.bindTexture(gl.TEXTURE_2D, null);
   
+  // ブレンディング有効
+  gl.enable(gl.BLEND);
+  
+  // uniform変数の登録と画面表示
+  gl.uniformMatrix4fv(uniformLocation[0], false, mvpMatrix);
+  gl.uniform1f(uniformLocation[1], vertexAlpha);
+  gl.uniform1f(uniformLocation[2], 0);
+  gl.uniform1f(uniformLocation[3], true);
+  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
+  
+  // コンテキストの再描画
+  gl.flush();
+  
+  window.requestAnimationFrame(arguments.callee);
 })();
 
 /**
