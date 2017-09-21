@@ -275,14 +275,63 @@ void main(void) {
 <script>
 (function() {
 
-var elmTransparency = document.getElementById('transparency');
-var elmAdd = document.getElementById('add');
-var elmRange = document.getElementById('range');
 var c = document.getElementById('canvas');
 c.width = 500;
 c.height = 300;
 
 var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+
+// 各種エレメントへの参照を取得
+var eRBGRed       = document.getElementById('rangeBgRed');
+var eRBGGreen     = document.getElementById('rangeBgGreen');
+var eRBGBlue      = document.getElementById('rangeBgBlue');
+var eRBGAlpha     = document.getElementById('rangeBgAlpha');
+var eRBCRed       = document.getElementById('rangeBcRed');
+var eRBCGreen     = document.getElementById('rangeBcGreen');
+var eRBCBlue      = document.getElementById('rangeBcBlue');
+var eRBCAlpha     = document.getElementById('rangeBcAlpha');
+var eIM1Blend     = document.getElementById('m1Blend');
+var eRM1VAlpha    = document.getElementById('rangeM1VertexAlpha');
+var eLM1CEquation = document.getElementById('m1cEquation');
+var eLM1AEquation = document.getElementById('m1aEquation');
+var eLM1CSRCBF    = document.getElementById('m1cSrcBlendFunc');
+var eLM1CDSTBF    = document.getElementById('m1cDstBlendFunc');
+var eLM1ASRCBF    = document.getElementById('m1aSrcBlendFunc');
+var eLM1ADSTBF    = document.getElementById('m1aDstBlendFunc');
+var eIM2Blend     = document.getElementById('m2Blend');
+var eRM2VAlpha    = document.getElementById('rangeM2VertexAlpha');
+var eLM2CEquation = document.getElementById('m2cEquation');
+var eLM2AEquation = document.getElementById('m2aEquation');
+var eLM2CSRCBF    = document.getElementById('m2cSrcBlendFunc');
+var eLM2CDSTBF    = document.getElementById('m2cDstBlendFunc');
+var eLM2ASRCBF    = document.getElementById('m2aSrcBlendFunc');
+var eLM2ADSTBF    = document.getElementById('m2aDstBlendFunc');
+
+// equation constant array
+var equationList = [
+  gl.FUNC_ADD,
+  gl.FUNC_SUBTRACT,
+  gl.FUNC_REVERSE_SUBTRACT
+];
+
+// blend factor constant array
+var blendFctList = [
+  gl.ZERO,
+  gl.ONE,
+  gl.SRC_COLOR,
+  gl.DST_COLOR,
+  gl.ONE_MINUS_SRC_COLOR,
+  gl.ONE_MINUS_DST_COLOR,
+  gl.SRC_ALPHA,
+  gl.DIST_ALPHA,
+  gl.ONE_MINUS_SRC_ALPHA,
+  gl.ONE_MINUS_DST_ALPHA,
+  gl.CONSTANT_COLOR,
+  gl.ONE_MINUS_CONSTANT_COLOR,
+  gl.CONSTANT_ALPHA,
+  gl.ONE_MINUS_CONSTANT_ALPHA,
+  gl.SRC_ALPHA_SATURATE,
+];
 
 // 各シェーダの生成、リンク
 var v_shader = create_shader('vs');
@@ -304,7 +353,7 @@ var position = [
   -1.0,  1.0, 0.0,
    1.0,  1.0, 0.0,
   -1.0, -1.0, 0.0,
-   1.0,  1.0, 0.0
+   1.0, -1.0, 0.0
 ];
 
 // 頂点色
@@ -337,7 +386,7 @@ var VBOList = [vPosition, vColor, vTextureCoord];
 var iIndex = create_ibo(index);
 
 // VBOとIBOの登録
-set_attribute(VBOList, attLocation,attStride);
+set_attribute(VBOList, attLocation, attStride);
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iIndex);
 
 // uniformLocationを配列に取得
