@@ -423,15 +423,12 @@ var count = 0;
 
 // 恒常ループ
 (function() {
-  // エレメントから値を取得しブレンドタイプを設定
-  if(elmTransparency.checked) { blend_type(0); }
-  if(elmAdd.checked) { blend_type(1); }
-  
-  // エレメントからアルファ成分を取得
-  var vertexAlpha = parseFloat(elmRange.value / 100);
-  
   // canvas初期化
-  gl.clearColor(0.0, 0.75, 0.75, 1.0);
+  var cR = parseFloat(eRBGRed.value / 100);
+  var cG = parseFloat(eRBGGreen.value / 100);
+  var cB = parseFloat(eRBGBlue.value / 100);
+  var cA = parseFloat(eRBGAlpha.value / 100);
+  gl.clearColor(cR, cG, cB, cA);
   gl.clearDepth(1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   
