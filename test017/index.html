@@ -432,50 +432,20 @@ var count = 0;
   gl.clearDepth(1.0);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   
+  // ブレンドカラーを設定
+  cR = parseFloat(eRBGRed.value / 100);
+  cG = parseFloat(eRBGGreen.value / 100);
+  cB = parseFloat(eRBGBlue.value / 100);
+  cA = parseFloat(eRBGAlpha.value / 100);
+  gl.blendColor(cR, cG, cB, cA);
+  
+  // モデルに適用するアルファ値
+  var m1VertexAlpha = parseFloat(eRM1VAlpha.value / 100);
+  var m2VertexAlpha = parseFloat(eRM2VAlpha.value / 100);
+  
   // カウンタ処理
   count++;
   var rad = (count % 360) * Math.PI / 180;
-  
-  // モデル座標変換行列の生成
-  m.identity(mMatrix);
-  m.translate(mMatrix, [0.25, 0.25, -0.25], mMatrix);
-  m.rotate(mMatrix, rad, [0,1,0], mMatrix);
-  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-  
-  // テクスチャのバインド
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  
-  // ブレンディングを無効にする
-  gl.disable(gl.BLEND);
-  
-  // uniform変数の登録と描画
-  gl.uniformMatrix4fv(uniformLocation[0], false, mvpMatrix);
-  gl.uniform1f(uniformLocation[1], 1.0);
-  gl.uniform1f(uniformLocation[2], 0);
-  gl.uniform1f(uniformLocation[3], true);
-  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-  
-  // モデル座標変換行列の生成
-  m.identity(mMatrix);
-  m.translate(mMatrix, [-0.25, -0.25, 0.25], mMatrix);
-  m.rotate(mMatrix, rad, [0,0,1], mMatrix);
-  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-  
-  // テクスチャのバインドを解除
-  gl.bindTexture(gl.TEXTURE_2D, null);
-  
-  // ブレンディング有効
-  gl.enable(gl.BLEND);
-  
-  // uniform変数の登録と画面表示
-  gl.uniformMatrix4fv(uniformLocation[0], false, mvpMatrix);
-  gl.uniform1f(uniformLocation[1], vertexAlpha);
-  gl.uniform1f(uniformLocation[2], 0);
-  gl.uniform1f(uniformLocation[3], true);
-  gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-  
-  // コンテキストの再描画
-  gl.flush();
   
   window.requestAnimationFrame(arguments.callee);
 })();
