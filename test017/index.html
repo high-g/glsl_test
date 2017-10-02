@@ -447,6 +447,23 @@ var count = 0;
   count++;
   var rad = (count % 360) * Math.PI / 180;
   
+  // モデル座標変換行列の生成
+  m.identity(mMatrix);
+  m.translate(mMatrix, [0.25, 0.25, -0.25], mMatrix);
+  m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
+  m.multiply(tmpMatrix, mMatrix, mvpMatrix);
+  
+  // テクスチャのバインド
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  
+  // ブレンディング
+  var equationColor = equationList[eLM1CEquation.selectedIndex];
+  var equationAlpha = equationList[eLM1AEquation.selectedIndex];
+  var blendFctCSRC = blendFctList[eLM1CSRCBF.selectedIndex];
+  var blendFctCDST = blendFctList[eLM1CDSTBF.selectedIndex];
+  var blendFctASRC = blendFctList[eLM1ASRCBF.selectedIndex];
+  var blendFctADST = blendFctList[eLM1ADSTBF.selectedIndex];
+  
   window.requestAnimationFrame(arguments.callee);
 })();
 
