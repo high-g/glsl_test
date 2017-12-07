@@ -1,8 +1,45 @@
 (function(){
 
-var width = 1024;
-var height = 680;
+var width = 1200,
+    height = 900,
+    arr_val = [50, 50, 50, 50, 50, 50],
+    arr_touch_flg = [false, false, false, false, false, false],
+    arr_dom = [];
 
+// -------------------- webgl --------------------
+for(var i=1; i<=6; i++) {
+  arr_dom[i-1] = document.getElementById('range'+i);
+  arr_dom[i-1].addEventListener('mousedown', downFunc);
+  arr_dom[i-1].addEventListener('mousemove', moveFunc);
+  arr_dom[i-1].addEventListener('mouseup', upFunc);
+}
+
+function downFunc() {
+  var id = getId(this.id);
+  arr_val[id] = +this.value;
+  arr_touch_flg[id] = true;
+}
+
+function moveFunc() {
+  var id = getId(this.id);
+  if(arr_touch_flg[id]) {
+    arr_val[id] = +this.value;
+  }
+}
+
+function upFunc() {
+  var id = getId(this.id);
+  arr_val[id] = +this.value;
+  arr_touch_flg[id] = false;
+}
+
+function getId(domId) {
+  var id = +domId.slice(-1) - 1;
+  return id;
+}
+
+
+// -------------------- webgl --------------------
 var renderer = new THREE.WebGLRenderer({
   canvas: document.getElementById('canvas')
 });
@@ -57,13 +94,15 @@ scene.add(directionalLight);
 tick();
 
 function tick() {
-  sphere.rotation.y += 0.01;
-  cube.rotation.y -= 0.01;
-  plane.rotation.y += 0.01;
-  cone.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  plane.rotation.y -= 0.01;
+  cone.rotation.x -= 0.01;
   cylinder.rotation.x -= 0.01;
   torus.rotation.x += 0.01;
-  torus.rotation.y += 0.01;
+  torus.rotation.z -= 0.01;
+
+  camera.position.set(arr_val[0] - 50, arr_val[1] - 50, arr_val[2] + 50);
+  camera.rotation.set((arr_val[3]-50) * 0.01, (arr_val[4]-50) * 0.01, (arr_val[5]-50)* 0.01);
   renderer.render(scene, camera);
   requestAnimationFrame(tick);
 }

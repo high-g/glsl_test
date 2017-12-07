@@ -4,10 +4,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link href="css/index.css" rel="stylesheet" type="text/css">
 <title>課題4</title>
 </head>
 <body>
 <canvas id="canvas"></canvas>
+<div class="menu_area">
+  <h2 class="gray">camera position</h2>
+  <dl class="flex">
+    <dt class="gray">x</dt>
+    <dd><input id="range1" type="range"></dd>
+    <dt class="gray">y</dt>
+    <dd><input id="range2" type="range"></dd>
+    <dt class="gray">z</dt>
+    <dd><input id="range3" type="range"></dd>
+  </dl>
+
+  <br>
+
+  <h2 class="gray">camera rotation</h2>
+  <dl class="flex">
+    <dt class="gray">x</dt>
+    <dd><input id="range4" type="range"></dd>
+    <dt class="gray">y</dt>
+    <dd><input id="range5" type="range"></dd>
+    <dt class="gray">z</dt>
+    <dd><input id="range6" type="range"></dd>
+  </dl>
+</div>
+
 <script src="js/lib/three.min.js"></script>
 <script src="js/lib/jquery-3.2.1.min.js"></script>
 <script src="js/index.js"></script>
