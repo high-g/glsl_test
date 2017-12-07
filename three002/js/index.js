@@ -1,28 +1,36 @@
 (function(){
 
-var width = 960;
-var height = 540;
+var width = 1024;
+var height = 680;
 
 var renderer = new THREE.WebGLRenderer({
   canvas: document.getElementById('canvas')
 });
-renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(width, height);
 
 var scene = new THREE.Scene();
+
 var camera = new THREE.PerspectiveCamera(45, width / height);
-camera.position.set(0, 0, 1000);
+camera.position.set(0, 0, +1000);
 
-var geometry = new THREE.BoxGeometry(400, 400, 400);
-var material = new THREE.MeshNormalMaterial();
-var box = new THREE.Mesh(geometry, material);
-scene.add(box);
+var geometry = new THREE.SphereGeometry(300, 30, 30);
+var material = new THREE.MeshStandardMaterial({color: 0xff0000});
 
-tick();
+var mesh = new THREE.Mesh(geometry, material);
+
+scene.add(mesh);
+
+var directionalLight = new THREE.DirectionalLight(0xffffff);
+directionalLight.position.set(1, 1, 1);
+
+scene.add(directionalLight);
+
+//tick();
+renderer.render(scene, camera);
 
 function tick() {
-  box.rotation.y += 0.01;
-  renderer.render(scene, camera); // レンダリング
+  mesh.rotation.y += 0.01;
+  renderer.render(scene, camera);
   requestAnimationFrame(tick);
 }
 
