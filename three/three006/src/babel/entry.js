@@ -30,21 +30,20 @@ const init = () => {
   plane.receiveShadow = true;
   cube.castShadow = true;
   sphere.castShadow = true;
+  spotLight.castShadow = true;
 
   plane.rotation.x = -0.5 * Math.PI;
   plane.position.set(15, 0, 0);
   cube.position.set(-10, 3, 0);
   sphere.position.set(20, 4, 2);
-  camera.position.set(30, 40, 30);
+  camera.position.set(-30, 40, 30);
   spotLight.position.set(-20, 30, -5);
-  
-  spotLight.castShadow = true;
-  scene.add(spotLight);
 
   scene.add(axes);
   scene.add(plane);
   scene.add(cube);
   scene.add(sphere);
+  scene.add(spotLight);
 
   camera.lookAt(scene.position);
   render();
