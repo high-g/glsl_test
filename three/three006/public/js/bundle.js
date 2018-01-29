@@ -9039,7 +9039,7 @@ var renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["k" /* WebGLRenderer */](
 var axes = new __WEBPACK_IMPORTED_MODULE_0_three__["a" /* AxesHelper */](20);
 
 var planeGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["g" /* PlaneGeometry */](60, 20);
-var planeMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["e" /* MeshLambertMaterial */]({ color: 0xcccccc });
+var planeMaterial = new __WEBPACK_IMPORTED_MODULE_0_three__["e" /* MeshLambertMaterial */]({ color: 0xffffff });
 var plane = new __WEBPACK_IMPORTED_MODULE_0_three__["d" /* Mesh */](planeGeometry, planeMaterial);
 
 var cubeGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["b" /* BoxGeometry */](4, 4, 4);
@@ -9055,6 +9055,7 @@ var spotLight = new __WEBPACK_IMPORTED_MODULE_0_three__["j" /* SpotLight */](0xf
 var init = function init() {
   renderer.setClearColor(new __WEBPACK_IMPORTED_MODULE_0_three__["c" /* Color */](0xeeeeee));
   renderer.setSize(WIDTH, HEIGHT);
+  renderer.shadowMapEnabled = true;
 
   plane.receiveShadow = true;
   cube.castShadow = true;
@@ -9062,6 +9063,7 @@ var init = function init() {
   spotLight.castShadow = true;
 
   plane.rotation.x = -0.5 * Math.PI;
+
   plane.position.set(15, 0, 0);
   cube.position.set(-10, 3, 0);
   sphere.position.set(20, 4, 2);

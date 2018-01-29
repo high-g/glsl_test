@@ -10,7 +10,7 @@ const renderer = new THREE.WebGLRenderer({canvas: canvas});
 const axes = new THREE.AxesHelper(20);
 
 const planeGeometry = new THREE.PlaneGeometry(60, 20);
-const planeMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc});
+const planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
 const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
@@ -26,6 +26,7 @@ const spotLight = new THREE.SpotLight(0xffffff);
 const init = () => {
   renderer.setClearColor(new THREE.Color(0xeeeeee));
   renderer.setSize(WIDTH, HEIGHT);
+  renderer.shadowMapEnabled = true;
 
   plane.receiveShadow = true;
   cube.castShadow = true;
@@ -33,6 +34,7 @@ const init = () => {
   spotLight.castShadow = true;
 
   plane.rotation.x = -0.5 * Math.PI;
+
   plane.position.set(15, 0, 0);
   cube.position.set(-10, 3, 0);
   sphere.position.set(20, 4, 2);
