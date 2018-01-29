@@ -33,9 +33,9 @@ const init = () => {
 
   plane.rotation.x = -0.5 * Math.PI;
   plane.position.set(15, 0, 0);
-  cube.position.set(-4, 3, 0);
+  cube.position.set(-10, 3, 0);
   sphere.position.set(20, 4, 2);
-  camera.position.set(-30, 40, 30);
+  camera.position.set(30, 40, 30);
   spotLight.position.set(-20, 30, -5);
   
   spotLight.castShadow = true;
