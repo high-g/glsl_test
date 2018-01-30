@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as Stats from 'stats-js'
+import dat from 'dat.gui'
 
 const canvas = document.getElementById('canvas');
 const WIDTH = window.innerWidth;
@@ -25,9 +26,19 @@ const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 const ambientLight = new THREE.AmbientLight(0x0c0c0c);
 const spotLight = new THREE.SpotLight(0xffffff);
 
+const gui = new dat.GUI();
+
+const controls = new function () {
+    this.rotationSpeed = 0.02;
+    this.bouncingSpeed = 0.03;
+};
+
 let stats, step = 0;
 
 const init = () => {
+
+  window.addEventListener('resize', onResize, false);
+
   stats = initStats();
   
   renderer.setClearColor(new THREE.Color(0xeeeeee));
@@ -55,6 +66,10 @@ const init = () => {
   scene.add(spotLight);
 
   camera.lookAt(scene.position);
+  
+  gui.add(controls, 'rotationSpeed', 0, 0.5);
+  gui.add(controls, 'bouncingSpeed', 0, 0.5);
+  
   loop();
 }
 
@@ -68,27 +83,34 @@ const initStats = () => {
   return stats;
 }
 
-const render = () => {
-  renderer.render(scene, camera);
-}
-
 const loop = () => {
   stats.update();
 
-  objRotation(cube, 0.02, 0.02, 0.02);
+  objRotation(
+    cube,
+    controls.rotationSpeed,
+    controls.rotationSpeed,
+    controls.rotationSpeed
+  );
 
-  step += 0.04;
+  step += controls.bouncingSpeed;
   sphere.position.x = 20 + (10 * (Math.cos(step)));
   sphere.position.y = 2 + (10 * Math.abs(Math.sin(step)));
-
+  
   requestAnimationFrame(loop);
-  render();
+  renderer.render(scene, camera);
 }
 
 const objRotation = (obj, x, y, z) => {
   obj.rotation.x += x;
   obj.rotation.y += y;
   obj.rotation.z += z;
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 init();

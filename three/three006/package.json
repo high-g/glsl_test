@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch"
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/dat-gui": "^0.6.3",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
@@ -24,6 +24,7 @@
     "webpack": "^3.10.0"
   },
   "dependencies": {
+    "dat.gui": "^0.7.0",
     "reset-css": "^2.2.1",
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.89.0"
