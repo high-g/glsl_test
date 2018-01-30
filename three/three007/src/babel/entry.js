@@ -23,6 +23,8 @@ const spotLight = new THREE.SpotLight(0xffffff);
 
 const axes = new THREE.AxesHelper(20);
 
+const gui = new dat.GUI();
+
 const controls = new function() {
   this.rotationSpeed = 0.02;
   this.numberOfObjects = scene.children.length;
@@ -35,6 +37,28 @@ const controls = new function() {
       this.numberOfObjects = scene.children.length;
     }
   }
+  
+  this.addCube = () => {
+    const cubeSize = Math.ceil((Math.random() * 3));
+    const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+    const cubeMaterial = new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff});
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.castShadow = true;
+    cube.name = 'cube-' + scene.children.length;
+    
+    cube.position.set(
+      -30 + Math.round((Math.random() * planeGeometry.parameters.width)),
+      Math.round((Math.random() * 5)),
+      -20 + Math.round((Math.random() * planeGeometry.parameters.height))
+    );
+console.log(cube);
+    scene.add(cube);
+    this.numberOfObjects = scene.children.length;
+  }
+  
+  this.outputObjects = () => {
+    console.log(scene.children);
+  }
 }
 
 const init = () => {
@@ -43,6 +67,7 @@ const init = () => {
   setCamera();
   setSpotLight();
   sceneAdd();
+  setDatGUI();
   render();
 }
 
@@ -68,15 +93,21 @@ const setSpotLight = () => {
   spotLight.castShadow = true;
 }
 
+const setDatGUI = () => {
+  gui.add(controls, 'rotationSpeed', 0, 0.5);
+  gui.add(controls, 'addCube');
+}
+
 const sceneAdd = () => {
   scene.add(axes);
   scene.add(camera);
   scene.add(plane);
   scene.add(ambientLight);
   scene.add(spotLight);
-} 
+}  
 
 const render = () => {
+  requestAnimationFrame(render);
   renderer.render(scene, camera);
 }
 
