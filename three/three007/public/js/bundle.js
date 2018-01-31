@@ -9034,13 +9034,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var canvas = document.getElementById('canvas');
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight;
+var canvas = document.getElementById('canvas');
+var gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["a" /* default */].GUI();
 
 var scene = new __WEBPACK_IMPORTED_MODULE_0_three__["i" /* Scene */]();
 var camera = new __WEBPACK_IMPORTED_MODULE_0_three__["g" /* PerspectiveCamera */](50, WIDTH / HEIGHT, 0.1, 1000);
-
 var renderer = new __WEBPACK_IMPORTED_MODULE_0_three__["k" /* WebGLRenderer */]({ canvas: canvas });
 
 var planeGeometry = new __WEBPACK_IMPORTED_MODULE_0_three__["h" /* PlaneGeometry */](60, 40, 1, 1);
@@ -9051,8 +9051,6 @@ var ambientLight = new __WEBPACK_IMPORTED_MODULE_0_three__["a" /* AmbientLight *
 var spotLight = new __WEBPACK_IMPORTED_MODULE_0_three__["j" /* SpotLight */](0xffffff);
 
 var axes = new __WEBPACK_IMPORTED_MODULE_0_three__["b" /* AxesHelper */](20);
-
-var gui = new __WEBPACK_IMPORTED_MODULE_2_dat_gui__["a" /* default */].GUI();
 
 var controls = new function () {
   var _this = this;
@@ -9078,7 +9076,7 @@ var controls = new function () {
     cube.name = 'cube-' + scene.children.length;
 
     cube.position.set(-30 + Math.round(Math.random() * planeGeometry.parameters.width), Math.round(Math.random() * 5), -20 + Math.round(Math.random() * planeGeometry.parameters.height));
-    console.log(cube);
+
     scene.add(cube);
     _this.numberOfObjects = scene.children.length;
   };

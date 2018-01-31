@@ -2,16 +2,13 @@ import * as THREE from 'three';
 import * as Stats from 'stats-js'
 import dat from 'dat.gui'
 
-
-const canvas = document.getElementById('canvas');
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
+const canvas = document.getElementById('canvas');
+const gui = new dat.GUI();
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-  50, WIDTH / HEIGHT, 0.1, 1000
-);
-
+const camera = new THREE.PerspectiveCamera(50, WIDTH / HEIGHT, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({canvas: canvas});
 
 const planeGeometry = new THREE.PlaneGeometry(60, 40, 1, 1);
@@ -23,12 +20,10 @@ const spotLight = new THREE.SpotLight(0xffffff);
 
 const axes = new THREE.AxesHelper(20);
 
-const gui = new dat.GUI();
-
 const controls = new function() {
   this.rotationSpeed = 0.02;
   this.numberOfObjects = scene.children.length;
-  
+
   this.removeCube = () => {
     const allChildren = scene.children;
     const lastObject = allChildren[allChildren.length - 1];
@@ -37,7 +32,7 @@ const controls = new function() {
       this.numberOfObjects = scene.children.length;
     }
   }
-  
+
   this.addCube = () => {
     const cubeSize = Math.ceil((Math.random() * 3));
     const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
@@ -51,11 +46,11 @@ const controls = new function() {
       Math.round((Math.random() * 5)),
       -20 + Math.round((Math.random() * planeGeometry.parameters.height))
     );
-console.log(cube);
+
     scene.add(cube);
     this.numberOfObjects = scene.children.length;
   }
-  
+
   this.outputObjects = () => {
     console.log(scene.children);
   }
