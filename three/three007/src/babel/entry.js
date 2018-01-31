@@ -91,6 +91,9 @@ const setSpotLight = () => {
 const setDatGUI = () => {
   gui.add(controls, 'rotationSpeed', 0, 0.5);
   gui.add(controls, 'addCube');
+  gui.add(controls, 'removeCube');
+  gui.add(controls, 'outputObjects');
+  gui.add(controls, 'numberOfObjects').listen();
 }
 
 const sceneAdd = () => {
