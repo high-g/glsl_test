@@ -1,0 +1,5 @@
+window.THREE = require('three/build/three.min.js')
+require('three/examples/js/QuickHull.js')
+require('three/examples/js/utils/SceneUtils.js')
+require('three/examples/js/geometries/ConvexGeometry.js')
+require('three/examples/js/ParametricGeometries.js')
