@@ -80,7 +80,6 @@ const moveCamera = () => {
 
 const render = () => {
   moveCamera()
-
   renderer.render(scene, camera)
   requestAnimationFrame(render)
 }
