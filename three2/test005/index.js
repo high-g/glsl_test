@@ -42,6 +42,27 @@ const normal = new THREE.Mesh(torusGeometry, normalMaterial)
 normal.position.set(0, 900, 0)
 scene.add(normal)
 
+const lanbertMaterial = new THREE.MeshLambertMaterial({color: 0xf3459e})
+const lanbert = new THREE.Mesh(torusGeometry, lanbertMaterial)
+lanbert.position.set(0, -900, 0)
+scene.add(lanbert)
+
+const phongMaterial = new THREE.MeshPhongMaterial({color: 0x68f073})
+const phong = new THREE.Mesh(torusGeometry, phongMaterial)
+phong.position.set(900, 900, 0)
+scene.add(phong)
+
+const toonMaterial = new THREE.MeshToonMaterial({color: 0xffe5aa})
+const toon = new THREE.Mesh(torusGeometry, toonMaterial)
+toon.position.set(900, 0, 0)
+scene.add(toon)
+
+const boxGeometry = new THREE.BoxGeometry(400, 400, 400)
+const boxMaterial = new THREE.MeshPhongMaterial({color: 0x0468fc})
+const box = new THREE.Mesh(boxGeometry, boxMaterial)
+box.position.set(900, -900, 0)
+scene.add(box)
+
 const directionalLight = new THREE.DirectionalLight(0xffffff)
 directionalLight.position.set(1, 1, 1)
 scene.add(directionalLight)
@@ -52,16 +73,20 @@ render = () => {
   rotation(mesh)
   rotation(cone)
   rotation(cylinder)
+  rotation(basic)
+  rotation(normal)
+  rotation(lanbert)
+  rotation(phong)
+  rotation(toon)
+  rotation(box)
 
   renderer.render(scene, camera)
   requestAnimationFrame(render)
 }
 
 rotation = (obj) => {
-  obj.rotation.x += 0.05 * (Math.random() - 0.3) 
-  obj.rotation.y += 0.05 * (Math.random() - 0.3)
-  obj.rotation.z += 0.05 * (Math.random() - 0.3)
-  console.log(obj)
+  obj.rotation.x += 0.05 * Math.random()
+  obj.rotation.y += 0.05 * Math.random()
 }
 
 render()
