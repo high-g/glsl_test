@@ -1,12 +1,13 @@
-const WIDTH = window.innerWidth
-const HEIGHT = window.innerHeight
-const aspect = WIDTH / HEIGHT
+let WIDTH = window.innerWidth
+let HEIGHT = window.innerHeight
+let aspect = WIDTH / HEIGHT
 
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.getElementById('canvas')
+  canvas: document.getElementById('canvas'),
+  antialias: true
 })
 renderer.setSize(WIDTH, HEIGHT)
-renderer.setClearColor(new THREE.Color(0xcccccc))
+renderer.setClearColor(new THREE.Color(0xffffff))
 
 const scene = new THREE.Scene()
 
@@ -25,7 +26,19 @@ const render = () => {
 }
 
 const onResize = () => {
-  
+  WIDTH = window.innerWidth
+  HEIGHT = window.innerHeight
+  aspect = WIDTH / HEIGHT
+
+  renderer.setPixelRatio(window.devicePixelRatio)
+  renderer.setSize(WIDTH, HEIGHT)
+
+  camera.aspect = aspect
+  camera.updateProjectionMatrix()
+  console.log(1)
 }
 
 render()
+
+onResize()
+window.addEventListener('resize', onResize)
