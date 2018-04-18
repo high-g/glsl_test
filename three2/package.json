@@ -1,8 +1,4 @@
 {
-  "name": "three012",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "dependencies": {
     "dat.gui": "^0.7.1",
     "three": "^0.90.0"
