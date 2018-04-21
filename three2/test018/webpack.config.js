@@ -1,10 +1,6 @@
 module.exports = {
   mode: 'development', // development, production
   entry: './src/main.ts',
-  // output: {
-  //   path: `${__dirname}/dist`,
-  //   filename:'bundle.js'
-  // },
   module: {
     rules: [
       {
@@ -14,6 +10,10 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.ts', '.vue', '.json']
+    extensions: ['.js','.ts']
+  },
+  devServer: {
+    contentBase: 'dist',
+    open: true
   }
 };

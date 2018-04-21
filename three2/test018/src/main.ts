@@ -1,4 +1,2 @@
-import {hello} from './sub'
+import * as THREE from 'three'
 
-const message: string = 'hello world'
-hello(message);
