@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import Earth from './objects/Earth'
 
 export class Main {
   public scene: THREE.Scene

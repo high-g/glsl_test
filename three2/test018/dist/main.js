@@ -66,19 +66,20 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/main.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/Main.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/main.ts":
+/***/ "./src/Main.ts":
 /*!*********************!*\
-  !*** ./src/main.ts ***!
+  !*** ./src/Main.ts ***!
   \*********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: Main */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-eval("\n\n//# sourceURL=webpack:///./src/main.ts?");
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Main\", function() { return Main; });\nvar Main = /** @class */ (function () {\n    function Main() {\n        this.setup();\n    }\n    Main.prototype.setup = function () {\n    };\n    return Main;\n}());\n\n\n\n//# sourceURL=webpack:///./src/Main.ts?");
 
 /***/ })
 
