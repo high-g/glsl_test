@@ -6,6 +6,7 @@ export default class GeoUtil {
     throw new Error()
   }
 
+  
   static translateGeoCoords(latitude: number,
                             longitude: number,
                             radius: number): THREE.Vector3 {
@@ -18,6 +19,7 @@ export default class GeoUtil {
 
     return new THREE.Vector3(x, y, z)
   }
+
 
   static getOrbitPoints(startPos: THREE.Vector3,
                          endPos: THREE.Vector3,
