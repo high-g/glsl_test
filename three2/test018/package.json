@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/three": "^0.91.10",
-    "three": "^0.92.0"
+    "three": "^0.92.0",
+    "three-trackballcontrols": "0.0.7"
   }
 }
