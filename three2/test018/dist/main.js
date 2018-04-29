@@ -79,7 +79,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Main\", function() { return Main; });\nvar Main = /** @class */ (function () {\n    function Main() {\n        this.setup();\n    }\n    Main.prototype.setup = function () {\n    };\n    return Main;\n}());\n\n\n\n//# sourceURL=webpack:///./src/Main.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"Main\", function() { return Main; });\nvar Main = /** @class */ (function () {\n    function Main() {\n        this.cities = [];\n        this.citiesLine = [];\n        this.citiesPoints = [\n            [51.2838, 0],\n            [39, -116],\n            [34, 118],\n            [-33, 151],\n            [-23, -46],\n            [1, 103],\n            [90, 0],\n            [-90, 0] // 南極\n        ];\n        this.setup();\n    }\n    Main.prototype.setup = function () {\n        this.containerElement = document.createElement('div');\n    };\n    return Main;\n}());\n\nnew Main();\n\n\n//# sourceURL=webpack:///./src/Main.ts?");
 
 /***/ })
 

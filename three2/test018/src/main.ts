@@ -14,12 +14,18 @@ export class Main {
   public earth: Earth
   public japan: CityPoint
 
-  public cities: CityPoint[]
-  public citiesLine: CityLine[]
+  public cities: CityPoint[]    = [];
+  public citiesLine: CityLine[] = [];
 
   public citiesPoints: number[][] = [
-    [51.2838, 0],
-    [39, -116]
+    [51.2838, 0], // イギリス
+    [39, -116], // 北京
+    [34, 118], // ロサンゼルス
+    [-33, 151], // シドニー
+    [-23, -46], // サンパウロ
+    [1, 103], // シンガポール
+    [90, 0], // 北極
+    [-90, 0] // 南極
   ]
 
   public satellite: CityPoint;
@@ -29,7 +35,7 @@ export class Main {
   }
 
   private setup(): void {
-
+    this.containerElement = document.createElement('div')
   }
 }
 
