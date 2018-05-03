@@ -1,0 +1,23 @@
+<canvas id="canvas"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/92/three.min.js"></script>
+<script>
+const scene = new THREE.Scene()
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 1000)
+camera.position.set(10, 10, 20)
+camera.lookAt(scene.position)
+
+const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+const cubeMaterial = new THREE.MeshNormalMaterial()
+const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
+scene.add(cube)
+
+const renderer = new THREE.WebGLRenderer({canvas: document.getElementById('canvas')})
+renderer.setSize(window.innerWidth, window.innerHeight)
+
+const render = () => {
+  renderer.render(scene, camera)
+  requestAnimationFrame(render)
+}
+render()
+</script>
