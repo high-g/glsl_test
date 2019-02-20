@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+<style>
+* {
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<script id="fshader" type="x-shader/x-fragment">
+  precision mediump float;
+  uniform float t;
+  uniform vec2 r;
+  
+  void main() {
+    vec2 p = (gl_FragCoord.xy * 2.0 / r) / min(r.x, r.y);
+    gl_FragColor = vec4(vec3(1.0), 1.0);
+  }
+  </script>
+
+<script id="vshader" type="x-shader/x-vertex">
+
+</script>
+
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+(function(){
+var c = document.getElementById('canvas')
+var gl = c.getContext('webgl') || c.getContext('experimental-webgl')
+
+c.width = window.innerWidth
+c.height = window.innerHeight
+
+gl.clearColor(0.0, 0.0, 0.0, 1.0)
+gl.clear(gl.COLOR_BUFFER_BIT)
+
+var create_shader
+
+})();
+</script>
+</body>
+</html>
