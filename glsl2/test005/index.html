@@ -5,29 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>test</title>
+<style>
+* {
+  padding: 0;
+  margin: 0;
+}
+</style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
 
-<script id="vs" type=""></script>
-<script id="fs" type=""></script>
+<script src="../lib/minMatrix.js"></script>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main(void) {
+  gl_Position = vec4(position, 1.0);
+}
+</script>
+<script id="fs" type="x-shader/x-fragment">
+precision mediump float;
+uniform float time;
+uniform vec2 mouse;
+uniform vec2 resolution;
+
+void main(void) {
+  vec2 m = vec2(mouse.x * 2.0 - 1.0, -mouse.y * 2.0 + 1.0);
+  vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+  float t = sin(length(m - p) * 30.0 + time * 5.0);
+  gl_FragColor = vec4(vec3(t), 1.0);
+}
+</script>
 <script>
 const c = document.getElementById('canvas')
 const gl = c.getContext('webgl')
-const cw = 512
-const ch = 512
+const cw = window.innerWidth
+const ch = window.innerHeight
 const mx = 0.5
 const my = 0.5
-const time = 0.0
-const tempTime = 0.0
 const fps = 1000 / 30
 const uniLocation = []
-let run, prg
+const startTime = new Date().getTime()
+let prg
 
 const init = () => {
   c.width = cw
   c.height = ch
   
+  prg = create_program(create_shader('vs'), create_shader('fs'))
+  uniLocation[0] = gl.getUniformLocation(prg, 'time')
+  uniLocation[1] = gl.getUniformLocation(prg, 'mouse')
+  uniLocation[2] = gl.getUniformLocation(prg, 'resolution')
+
+  const position = [
+    -1.0,  1.0,  0.0,
+     1.0,  1.0,  0.0,
+    -1.0, -1.0,  0.0,
+     1.0, -1.0,  0.0
+  ]
+
+  const index = [
+    0, 2, 1,
+    1, 2, 3
+  ]
+
+  const vPosition = create_vbo(position)
+  const vIndex = create_ibo(index)
+  const vAttLocation = gl.getAttribLocation(prg, 'position')
+  gl.bindBuffer(gl.ARRAY_BUFFER, vPosition)
+  gl.enableVertexAttribArray(vAttLocation)
+  gl.vertexAttribPointer(vAttLocation, 3, gl.FLOAT, false, 0, 0)
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex)
+  gl.clearColor(0.0, 0.0, 0.0, 1.0)
+  render()
 }
 
 const create_shader = (id) => {
@@ -83,6 +133,28 @@ const create_vbo = (data) => {
   // バッファのバインドを無効化
   gl.bindBuffer(gl.ARRAY_BUFFER, null)
   return vbo
+}
+
+const create_ibo = (data) => {
+  const ibo = gl.createBuffer()
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo)
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int16Array(data), gl.STATIC_DRAW)
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null)
+  return ibo
+}
+
+const render = () => {
+  // 時間管理
+  const time = (new Date().getTime() - startTime) * 0.001
+  // カラーバッファクリア
+  gl.clear(gl.COLOR_BUFFER_BIT)
+  // uniform関連
+  gl.uniform1f(uniLocation[0], time)
+  gl.uniform2fv(uniLocation[1], [mx, my])
+  gl.uniform2fv(uniLocation[2], [cw, ch])
+  // 描画
+  gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0)
+  requestAnimationFrame(render)
 }
 
 init()
