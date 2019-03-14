@@ -5,11 +5,12 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
+vec3 colorA = vec3(0.149, 1.141, 0.912);
+vec3 colorB = vec3(1.0, 0.833, 0.224);
+
 void main() {
-    vec2 st = gl_FragCoord.xy / u_resolution;
-//    float s = sin(st.y * u_time);
-//    float c = cos(st.x * u_time);
-    float s = sin(u_time + st.x * PI);
-    float y = mod(u_time, 0.5);
-    gl_FragColor = vec4(y, 0.0, 0.0, 1.0);
+    vec3 color = vec3(0.0);
+    float pct = abs(sin(u_time));
+    color = mix(colorA, colorB, pct);
+    gl_FragColor = vec4(color, 1.0);
 }
