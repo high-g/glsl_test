@@ -11,8 +11,8 @@ void main() {
 //    float top = step(0.1, 1.0 - st.y);
 //    float bottom = step(0.1, st.y);
 
-    vec2 bl = step(vec2(0.2, 0.05), st);
-    vec2 tr = step(vec2(0.3, 0.2), 1.0 - st);
+    vec2 bl = smoothstep(0.1, st.x, vec2(0.4, 0.9));
+    vec2 tr = smoothstep(0.1, st.x, vec2(0.4, 0.5));
 
     color = vec3(bl.x * bl.y * tr.x * tr.y);
 
