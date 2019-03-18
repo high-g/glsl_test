@@ -16,6 +16,6 @@ void main() {
 //    vec2 tc = vec2(0.5) - st;
 //    pct = sqrt(tc.x * tc.x + tc.y * tc.y);
 
-    float color = 1.0 - step(pct, 0.1);
+    float color = smoothstep(0.05, 0.15, pct);
     gl_FragColor = vec4(vec3(color), 1.0);
 }
