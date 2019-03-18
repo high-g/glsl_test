@@ -16,6 +16,6 @@ void main() {
 //    vec2 tc = vec2(0.5) - st;
 //    pct = sqrt(tc.x * tc.x + tc.y * tc.y);
 
-    float color = step(pct, 0.1);
+    float color = 1.0 - step(pct, 0.1);
     gl_FragColor = vec4(vec3(color), 1.0);
 }
