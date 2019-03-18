@@ -7,15 +7,15 @@ void main() {
     float pct = 0.0;
 
     // easy
-    //pct = distance(st, vec2(0.5));
+    pct = distance(st, vec2(0.5));
 
 //    vec2 toCenter = vec2(0.5) - st;
 //    pct = length(toCenter);
 
 
-    vec2 tc = vec2(0.5) - st;
-    pct = sqrt(tc.x * tc.x + tc.y * tc.y);
+//    vec2 tc = vec2(0.5) - st;
+//    pct = sqrt(tc.x * tc.x + tc.y * tc.y);
 
-    vec3 color = vec3(pct);
-    gl_FragColor = vec4(color, 1.0);
+    float color = step(pct, 0.1);
+    gl_FragColor = vec4(vec3(color), 1.0);
 }
