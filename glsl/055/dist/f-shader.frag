@@ -4,7 +4,7 @@ uniform vec2 u_resolution;
 uniform float u_time;
 
 float plot(vec2 st, float pct) {
-    return smoothstep(pct-0.01, pct, st.y) - smoothstep(pct, pct+0.01, st.y);
+    return smoothstep(pct-0.05, pct, st.y) - smoothstep(pct, pct+0.05, st.y);
 }
 
 void main() {
