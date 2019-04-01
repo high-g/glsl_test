@@ -19,7 +19,7 @@ void main( void ) {
     gg = rota(gg.yzx);
     gg = rota(gg.zyx);
     gg = rota(gg);
-    gg = rota(gg);    gg = rota(gg);
-
+    gg = rota(gg);
+    gg = rota(gg);
     gl_FragColor = vec4(gg, 1.0);
 }
