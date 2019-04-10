@@ -9,7 +9,7 @@ float line(in vec2 _st, in float boundary, in float thin, in bool vertical) {
 }
 
 vec3 fill(in vec2 _st, in vec2 _startPoint, in vec2 _endPoint, vec3 _color) {
-    vec3 color = _color;// vec3(1.0);
+    vec3 color = vec3(1.0);
     if(step(_st, _startPoint) == vec2(1.0) && step(_st, _endPoint) == vec2(0.0)) {
         color = _color;
     }
