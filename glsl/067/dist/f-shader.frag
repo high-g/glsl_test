@@ -3,7 +3,7 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
-#define PI 3.14159265359;
+#define PI 3.14159265359
 
 mat2 rotate2d(float _angle) {
     return mat2(cos(_angle), -sin(_angle), sin(_angle), cos(_angle));
@@ -25,10 +25,11 @@ void main() {
     vec3 color = vec3(0.0);
 
     st -= vec2(0.5);
-    st = rotate2d(sin(u_time) * PI) * st;
-st += vec2(0.5);
+    st = rotate2d( sin(u_time)*PI ) * st;
+    st += vec2(0.5);
 
-color += vec3(cross(st, 0.4));
+    color += vec3(cross(st, 0.4));
 
-gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, 1.0);
 }
+
