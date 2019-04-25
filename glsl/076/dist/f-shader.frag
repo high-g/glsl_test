@@ -10,9 +10,10 @@ void main() {
     float light = 0.0;
 
     for(float x=0.1; x<6.0; x+=1.0) {
-        f = vec2(sin(u_time));
+        f = vec2(
+            sin(u_time)
+        );
         light += distance(uv, f);
-        //c.y = sin(u_time + x) * 0.2 + 0.6;
     }
     c *= light;
     gl_FragColor = vec4(c, 1.0);
