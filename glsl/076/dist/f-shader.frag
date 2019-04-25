@@ -11,9 +11,9 @@ void main() {
 
     for(float x=0.1; x<6.0; x+=1.0) {
         f = vec2(
-            sin(u_time)
+            sin(u_time + uv.x * x * x * x)
         );
-        light += distance(uv, f);
+        light += .02 / distance(uv, f);
     }
     c *= light;
     gl_FragColor = vec4(c, 1.0);
