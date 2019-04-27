@@ -5,7 +5,7 @@ uniform vec2 u_mouse;
 uniform vec2 u_resolution;
 
 void main() {
-    vec2 st = (gl_FragCoord.xy/u_resolution) + u_mouse / 4.0;
+    vec2 st = gl_FragCoord.xy/u_resolution;
     float color = 0.0;
     color += sin(st.x + u_time + st.y * st.y);
     color += color * cos(sin(st.x / 0.05));
