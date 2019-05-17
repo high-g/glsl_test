@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Document</title>
+<style type="text/css">
+  *{
+    margin: 0;
+    padding: 0;
+  }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/loaders/DDSLoader.js"></script>
+<script src="js/loaders/MTLLoader.js"></script>
+<script src="js/loaders/OBJLoader.js"></script>
+<script src="js/controls/OrbitControls.js"></script>
+<script>
+  $(document).ready(function(){
+    var stats;
+    var camera, scene, renderer;
+    var mouseX = 0, mouseY = 0;
+
+    init();
+    animate();
+
+    function init(){
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+      camera.position.z = 450;
+
+      // scene
+      var controls = new THREE.OrbitControls(camera);
+      scene = new THREE.Scene();
+
+      var ambient = new THREE.AmbientLight(0x808080);
+      scene.add(ambient);
+
+      var directionalLight = new THREE.DirectionalLight(0xffeedd);
+      directionalLight.position.set(0, 1, 0).normalize();
+      scene.add(directionalLight);
+
+      // model
+      var onProgress = function (xhr){
+        console.log(xhr.loaded + "/" +  xhr.total);
+        if (xhr.lengthComputable){
+          var percentComplete = xhr.loaded / xhr.total * 100;
+          console.log(Math.round(percentComplete, 2) + '% downloaded');
+        }
+      };
+
+      var onError = function (xhr){
+      };
+
+      THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+
+      //r87記述
+      var mtlLoader = new THREE.MTLLoader();
+      mtlLoader.setPath('obj/');
+      mtlLoader.load('test.mtl', function(materials){
+
+        materials.preload();
+
+        var objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(materials);
+        objLoader.setPath('obj/');
+        objLoader.load('test.obj', function (object){
+          object.position.y = -50;
+          scene.add(object);
+        }, onProgress, onError);
+      });
+
+      renderer = new THREE.WebGLRenderer();
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      $('#stage').append(renderer.domElement);
+    }
+
+    function animate(){
+      requestAnimationFrame(animate);
+      render();
+    }
+
+    function render(){
+      camera.lookAt(scene.position);
+      renderer.render(scene, camera);
+    }
+  });
+</script>
+</body>
+</html>
